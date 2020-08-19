@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "795876384210",
+    "firebase_url": "https://obtain25-a26a3.firebaseio.com",
+    "project_id": "obtain25-a26a3",
+    "storage_bucket": "obtain25-a26a3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:795876384210:android:4329e4c154b106d865bc0b",
+        "android_client_info": {
+          "package_name": "com.userobtain25"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "795876384210-j6rpa8tf1v4af1jgbc8n667nd2on1dnd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbMd5Kdd5JlrE5mDB6t-mPz8k66xRT3wk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "795876384210-j6rpa8tf1v4af1jgbc8n667nd2on1dnd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

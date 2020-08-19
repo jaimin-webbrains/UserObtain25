@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">UserObtain25New</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="address">446-447, Earth Alpha,Tandalja Rd,AshwameghNagar,Vasna Vadodara,Gujarat 390012</string>
+    <string name="popular">Popular Deals</string>
+    <string name="location">your location</string>
+    <string name="search">Search for restaurant,deals.....</string>
+    <string name="great">Great Offers</string>
+    <string name="trending">Trending Places</string>
+    <string name="arrival">New Arrivals</string>
+    <string name="near">Near by Deals</string>
+    <string name="data">No Data Found</string>
+    <string name="name">Obtain 25</string>
+    <string name="facebook">Continue with Facebook</string>
+    <string name="google">Continue with Google</string>
+    <string name="email">Continue with Email</string>
+    <string name="privacy">By logging in you agree to Daily Deals Terms of services,Privacy Policy and Content Policy</string>
+    <string name="later">I\'ll log in later</string>
+    <string name="login">Please Login &amp; Try Again..</string>
+
+</resources>
