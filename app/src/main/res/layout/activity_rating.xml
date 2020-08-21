@@ -59,6 +59,9 @@
             android:layout_margin="5dp"
             android:background="@color/overlay_dark_10"
             android:hint="Write review...."
+            android:inputType="text"
+            android:focusableInTouchMode="true"
+            android:selectAllOnFocus="false"
             android:textColor="@color/overlay_dark_40"
             android:textSize="@dimen/text_size_large" />
 

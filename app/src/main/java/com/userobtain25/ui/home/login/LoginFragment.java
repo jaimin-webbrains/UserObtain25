@@ -1,4 +1,4 @@
-package com.userobtain25.ui;
+package com.userobtain25.ui.home.login;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -18,15 +20,17 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.fragment.app.Fragment;
 
 import com.google.gson.Gson;
 import com.userobtain25.R;
 import com.userobtain25.api.RetrofitHelper;
 import com.userobtain25.model.SuccessModel;
 import com.userobtain25.model.login.LoginModel;
+import com.userobtain25.ui.HomeActivity;
+import com.userobtain25.ui.RegisterActivity;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
 
@@ -41,7 +45,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+
+public class LoginFragment extends Fragment implements View.OnClickListener {
 
     protected ViewDialog viewDialog;
     EditText editText_Email, editText_Password;
@@ -51,34 +56,45 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     Dialog dialog;
     ImageView show_confirm;
 
+    public LoginFragment() {
+        // Required empty public constructor
+    }
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        loginModel = PrefUtils.getUser(LoginActivity.this);
-        viewDialog = new ViewDialog(LoginActivity.this);
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        loginModel = PrefUtils.getUser(getActivity());
+        viewDialog = new ViewDialog(getActivity());
         viewDialog.setCancelable(false);
         try {
-            loginModel = PrefUtils.getUser(LoginActivity.this);
+            loginModel = PrefUtils.getUser(getActivity());
             if (loginModel.getSessionData() != null) {
-                Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                Intent i = new Intent(getActivity(), HomeActivity.class);
                 i.putExtra("type", "1");
                 startActivity(i);
-                finish();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        editText_Email = findViewById(R.id.editText_Email);
-        editText_Password = findViewById(R.id.editText_Password);
-        btn_login = findViewById(R.id.btn_login);
-        show_confirm = findViewById(R.id.show_confirm);
-        label_f_password = findViewById(R.id.label_f_password);
-        label_donthaveaccount = findViewById(R.id.label_donthaveaccount);
+        editText_Email = rootView.findViewById(R.id.editText_Email);
+        editText_Password = rootView.findViewById(R.id.editText_Password);
+        btn_login = rootView.findViewById(R.id.btn_login);
+        show_confirm = rootView.findViewById(R.id.show_confirm);
+        label_f_password = rootView.findViewById(R.id.label_f_password);
+        label_donthaveaccount = rootView.findViewById(R.id.label_donthaveaccount);
         btn_login.setOnClickListener(this);
         label_f_password.setOnClickListener(this);
         label_donthaveaccount.setOnClickListener(this);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         show_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +119,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
         });
-
+        return rootView;
     }
 
     public void LoginCall() {
@@ -138,17 +154,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (object != null && object.getError() == false) {
                         Log.e("TAG", "Login_Response : " + new Gson().toJson(response.body()));
 
-                        PrefUtils.setUser(object, LoginActivity.this);
+                        PrefUtils.setUser(object, getActivity());
 
 
-                        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                        Intent i = new Intent(getActivity(), HomeActivity.class);
                         i.putExtra("type", "0");
                         startActivity(i);
-                        finish();
 
 
                     } else if (object != null && object.getError() == true) {
-                        Toast.makeText(LoginActivity.this, object.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), object.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -178,7 +193,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 LoginCall();
                 break;
             case R.id.label_donthaveaccount:
-                Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
+                Intent i = new Intent(getActivity(), RegisterActivity.class);
                 startActivity(i);
                 break;
             case R.id.label_f_password:
@@ -189,7 +204,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void forgotPassword() {
-        dialog = new Dialog(LoginActivity.this);
+        dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
         dialog.setContentView(R.layout.dialog_forgot_password);
         dialog.setCancelable(true);
@@ -227,10 +242,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             SuccessModel object = response.body();
                             hideProgressDialog();
                             if (object != null && object.getError() == false) {
-                                Toast.makeText(LoginActivity.this, object.getMsg() + "", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), object.getMsg() + "", Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                             } else if (object != null && object.getError() == true) {
-                                Toast.makeText(LoginActivity.this, object.getMsg() + "", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), object.getMsg() + "", Toast.LENGTH_SHORT).show();
 
                                 dialog.dismiss();
                             } else {
@@ -244,7 +259,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 }
                                 try {
                                     Log.e("TAG", "PO=> Error " + jObjError.getJSONObject("errors") + "");
-                                    Toast.makeText(LoginActivity.this, jObjError.getJSONObject("errors") + "", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity(), jObjError.getJSONObject("errors") + "", Toast.LENGTH_LONG).show();
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -253,7 +268,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 try {
 
                                 } catch (Exception e) {
-                                    Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                                 }
                             }
                         }

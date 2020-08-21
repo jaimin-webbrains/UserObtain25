@@ -1,5 +1,6 @@
 package com.userobtain25.ui.home.goout;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.userobtain25.api.RetrofitHelper;
 import com.userobtain25.model.goout.trendingplace.ResultTrandingPlace;
 import com.userobtain25.model.goout.trendingplace.ResultTrandingPlaces;
 import com.userobtain25.model.login.LoginModel;
+import com.userobtain25.ui.LoginActivity;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
 
@@ -220,10 +222,26 @@ public class TrendingActivity extends AppCompatActivity {
             holder.txtRating.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (loginModel != null) {
+                        Intent i = new Intent(TrendingActivity.this, RatingActivity.class);
+                        i.putExtra("restro_id", datum.getId());
+                        startActivity(i);
 
-                    Intent i = new Intent(TrendingActivity.this, RatingActivity.class);
-                    i.putExtra("restro_id", datum.getId());
-                    startActivity(i);
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(TrendingActivity.this);
+                        ViewGroup viewGroup = findViewById(android.R.id.content);
+                        View dialogView = LayoutInflater.from(v.getContext()).inflate(R.layout.customview, viewGroup, false);
+                        builder.setView(dialogView);
+                        final AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                        dialogView.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                alertDialog.dismiss();
+
+                            }
+                        });
+                    }
 
 
                 }
@@ -234,6 +252,7 @@ public class TrendingActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent i = new Intent(TrendingActivity.this, Near_deal_deailActivity.class);
                     i.putExtra("restro_id", datum.getId());
+                    i.putExtra("type", "1");//1:trending
                     startActivity(i);
                 }
             });

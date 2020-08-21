@@ -220,6 +220,7 @@ public class SearchFragment extends Fragment {
                 public void onClick(View v) {
                     Intent i = new Intent(getActivity(), Near_deal_deailActivity.class);
                     i.putExtra("restro_id", datum.getId());
+                    i.putExtra("type", "3");//0:search
                     startActivity(i);
                 }
             });

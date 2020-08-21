@@ -3,6 +3,7 @@ package com.userobtain25.ui.home.goout;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -45,7 +47,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -60,7 +61,7 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
     LinearLayout l1Horizontal;
     String restro_id, type;
     Dialog dialog;
-    private int mYear, mMonth, mDay;
+    private int mYear, mMonth, mDay, mHour, mMinute;
     private MyCustomAdapter myCustomAdapter;
     private RestroAdapter restroAdapter;
     private ArrayList<ResultUserCoupon> resultDisplayActiveRestaurantCoupon_s = new ArrayList<>();
@@ -112,7 +113,7 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
                     recyclerviewNear.setAdapter(restroAdapter);
 
                 } else if (object != null && object.getError() == true) {
-                    Toast.makeText(Coupon_deailActivity.this, object.getMessage(), Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(Coupon_deailActivity.this, object.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
 
 
@@ -165,7 +166,7 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
                     recyclerviewPopular.setAdapter(myCustomAdapter);
 
                 } else if (object != null && object.getError() == true) {
-                    Toast.makeText(Coupon_deailActivity.this, object.getMessage(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(Coupon_deailActivity.this, object.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
 
 
@@ -225,7 +226,7 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
     }
 
     public class RestroAdapter extends RecyclerView.Adapter<RestroAdapter.MyViewHolder> {
-        String resro_id,member;
+        String resro_id, member;
         private ArrayList<ResultUserCoupon> moviesList;
 
         public RestroAdapter(ArrayList<ResultUserCoupon> moviesList) {
@@ -277,7 +278,22 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
                 @Override
                 public void onClick(View v) {
                     if (loginModel != null) {
-                        SendRequest();
+                        if (loginModel.getSessionData().getPackageId() != null) {
+                            SendRequest();
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Coupon_deailActivity.this);
+                            ViewGroup viewGroup = findViewById(android.R.id.content);
+                            View dialogView = LayoutInflater.from(v.getContext()).inflate(R.layout.custom_package, viewGroup, false);
+                            builder.setView(dialogView);
+                            final AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                            dialogView.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                        }
                     } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(Coupon_deailActivity.this);
                         ViewGroup viewGroup = findViewById(android.R.id.content);
@@ -289,6 +305,7 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
                             @Override
                             public void onClick(View v) {
                                 alertDialog.dismiss();
+
                             }
                         });
 
@@ -313,6 +330,7 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
 
             final EditText editN_m = dialog.findViewById(R.id.editN_m);
             final EditText editDate = dialog.findViewById(R.id.editDate);
+            final EditText editTime = dialog.findViewById(R.id.editTime);
             final Button btn_update = dialog.findViewById(R.id.btn_update);
             editDate.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -339,12 +357,36 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
 
                 }
             });
+            editTime.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Get Current Time
+                    final Calendar c = Calendar.getInstance();
+                    mHour = c.get(Calendar.HOUR_OF_DAY);
+                    mMinute = c.get(Calendar.MINUTE);
+
+                    // Launch Time Picker Dialog
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(Coupon_deailActivity.this,
+                            new TimePickerDialog.OnTimeSetListener() {
+
+                                @Override
+                                public void onTimeSet(TimePicker view, int hourOfDay,
+                                                      int minute) {
+
+                                    editTime.setText(hourOfDay + ":" + minute);
+                                }
+                            }, mHour, mMinute, false);
+                    timePickerDialog.show();
+
+                }
+            });
 
             btn_update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final String member = editN_m.getText().toString().trim();
                     final String date = editDate.getText().toString().trim();
+                    final String time = editTime.getText().toString().trim();
 
 
                     if (member.isEmpty()) {
@@ -356,13 +398,18 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
                         editDate.setError("Date Required");
                         editDate.requestFocus();
                         return;
+                    }
+                    if (time.isEmpty()) {
+                        editTime.setError("Time Required");
+                        editTime.requestFocus();
+                        return;
                     } else {
 
                         HashMap<String, String> hashMap = new HashMap<>();
                         hashMap.put("user_id", loginModel.getSessionData().getId() + "");
                         hashMap.put("resto_id", resro_id + "");
                         hashMap.put("num_member", member + "");
-                        hashMap.put("date_and_time", date + "");
+                        hashMap.put("date_and_time", date + time + "");
                         showProgressDialog();
                         Log.e("GAYA", hashMap + "");
                         Call<SuccessModel> marqueCall = RetrofitHelper.createService(RetrofitHelper.Service.class).UserRequest(hashMap);

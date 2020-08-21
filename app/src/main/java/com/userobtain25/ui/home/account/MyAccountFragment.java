@@ -8,11 +8,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,8 +50,9 @@ import com.userobtain25.api.video_model.ServerResponse;
 import com.userobtain25.model.SuccessModel;
 import com.userobtain25.model.account.ResultGetRestoInfoById;
 import com.userobtain25.model.account.ResultGetRestoInfoById_;
+import com.userobtain25.model.account.ResultUserPackageInfo;
+import com.userobtain25.model.account.ResultUserPackageInfo_;
 import com.userobtain25.model.login.LoginModel;
-import com.userobtain25.ui.LoginActivity;
 import com.userobtain25.ui.SelectionActivity;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
@@ -55,8 +60,13 @@ import com.userobtain25.utils.ViewDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -67,20 +77,28 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.app.Activity.RESULT_OK;
+import static android.app.Activity.RESULT_CANCELED;
 
 
 public class MyAccountFragment extends Fragment implements View.OnClickListener {
     final static String[] PERMISSIONS = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     private static final int PERMISSION_ALL = 1;
+    private static final String IMAGE_DIRECTORY = "/WebBrains";
     public static Bitmap bitmap;
     protected ViewDialog viewDialog;
     Dialog dialog;
-    AppCompatTextView txtName, txtPd, txtAd,txtLogout, txtPassword, txtNotification, txtAa;
+    AppCompatTextView txtName, txtPd, txtAd, txtLogout, txtPassword, txtNotification, txtAa, txtRv,txtSDate,txtEDate,txtOffer;
+    View ViewAd, viewRv;
+    LinearLayout l1Ad, l1Rv,l1Date;
     CircularImageView imgResro;
     LoginModel loginModel;
-    private String mediaPathImage;
+    String path;
+    String selectedImagePath;
     private ResultGetRestoInfoById_ resultGetRestoInfoById_;
+    private ArrayList<ResultUserPackageInfo_> resultUserPackageInfo_s = new ArrayList<>();
+
+    private Uri filePath;
+    private int GALLERY = 1, CAMERA = 2;
 
     public static boolean hasPermissions(Context context, String... permissions) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
@@ -113,16 +131,92 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
         txtPassword = rootView.findViewById(R.id.txtPassword);
         txtNotification = rootView.findViewById(R.id.txtNotification);
         txtAa = rootView.findViewById(R.id.txtAa);
+        txtRv = rootView.findViewById(R.id.txtRv);
+        txtSDate = rootView.findViewById(R.id.txtSDate);
+        txtEDate = rootView.findViewById(R.id.txtEDate);
+        txtOffer = rootView.findViewById(R.id.txtOffer);
+        l1Date = rootView.findViewById(R.id.l1Date);
+        l1Rv = rootView.findViewById(R.id.l1Rv);
+        l1Ad = rootView.findViewById(R.id.l1Ad);
+        viewRv = rootView.findViewById(R.id.viewRv);
+        ViewAd = rootView.findViewById(R.id.ViewAd);
         imgResro = rootView.findViewById(R.id.imgResro);
         txtPd.setOnClickListener(this);
         txtAa.setOnClickListener(this);
         txtNotification.setOnClickListener(this);
         txtPassword.setOnClickListener(this);
         txtAd.setOnClickListener(this);
+        txtRv.setOnClickListener(this);
         txtLogout.setOnClickListener(this);
         imgResro.setOnClickListener(this);
+        if (loginModel.getSessionData().getPackageId() != null) {
+            l1Rv.setVisibility(View.VISIBLE);
+            ViewAd.setVisibility(View.GONE);
+            l1Ad.setVisibility(View.GONE);
+            GetPackageInfo();
+        } else {
+            l1Rv.setVisibility(View.GONE);
+            viewRv.setVisibility(View.GONE);
+            l1Date.setVisibility(View.GONE);
+            txtOffer.setVisibility(View.GONE);
+            l1Ad.setVisibility(View.VISIBLE);
+        }
         GetUserInfo();
         return rootView;
+    }
+
+    private void GetPackageInfo() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("user_id", loginModel.getSessionData().getId() + "");
+
+        showProgressDialog();
+        Log.e("GAYA", hashMap + "");
+        Call<ResultUserPackageInfo> marqueCall = RetrofitHelper.createService(RetrofitHelper.Service.class).UserPackageInfo(hashMap);
+        marqueCall.enqueue(new Callback<ResultUserPackageInfo>() {
+            @Override
+            public void onResponse(@NonNull Call<ResultUserPackageInfo> call, @NonNull Response<ResultUserPackageInfo> response) {
+                ResultUserPackageInfo object = response.body();
+                hideProgressDialog();
+                Log.e("TAG", "ChatV_Response : " + new Gson().toJson(response.body()));
+                if (object != null && object.getError() == false) {
+
+
+                    resultUserPackageInfo_s = object.getResultUserPackageInfo();
+                    txtEDate.setText(resultUserPackageInfo_s.get(0).getPackageEnds());
+                    txtSDate.setText(resultUserPackageInfo_s.get(0).getPackageStarts());
+                    txtOffer.setText(resultUserPackageInfo_s.get(0).getPackageName());
+                } else if (object != null && object.getError() == true) {
+                    // Toast.makeText(getActivity(), object.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+
+
+                    JSONObject jObjError = null;
+                    try {
+                        jObjError = new JSONObject(response.errorBody().string());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        Log.e("TAG", "PO=> Error " + jObjError.getJSONObject("errors") + "");
+                        Toast.makeText(getActivity(), jObjError.getJSONObject("errors") + "", Toast.LENGTH_LONG).show();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResultUserPackageInfo> call, @NonNull Throwable t) {
+                t.printStackTrace();
+                hideProgressDialog();
+                Log.e("ChatV_Response", t.getMessage() + "");
+            }
+        });
     }
 
     private void GetUserInfo() {
@@ -203,7 +297,12 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
                 personalDetail();
                 break;
             case R.id.txtAd:
-                //buy package code
+                Intent i2 = new Intent(getActivity(), PackageActivity.class);
+                startActivity(i2);
+                break;
+            case R.id.txtRv:
+                Intent i3 = new Intent(getActivity(), RequestActivity.class);
+                startActivity(i3);
                 break;
             case R.id.txtPassword:
                 changePassword();
@@ -235,121 +334,263 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
     }
 
     private void SelectImage() {
+        final AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getActivity());
+        pictureDialog.setTitle("Add Photo!");
+        String[] pictureDialogItems = {
+                "Choose from Gallery",
+                "Take Photo",
+                "Cancel"};
+        pictureDialog.setItems(pictureDialogItems,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                choosePhotoFromGallary();
+                                break;
+                            case 1:
+                                takePhotoFromCamera();
+                                break;
+                            case 2:
+                                dialog.dismiss();
+                                break;
+                        }
+                    }
+                });
+        pictureDialog.show();
+
+    }
+
+    private void takePhotoFromCamera() {
+        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, CAMERA);
+    }
+
+    private void choosePhotoFromGallary() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, 0);
-
-
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(galleryIntent, GALLERY);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        try {
+        if (resultCode == RESULT_CANCELED) {
+            return;
+        }
+        filePath = data.getData();
+        selectedImagePath = getPath(filePath);
 
-            if (requestCode == 0 && resultCode == RESULT_OK && null != data) {
-
-                // Get the Image from data
-                Uri selectedImage = data.getData();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-                Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                assert cursor != null;
-                cursor.moveToFirst();
-
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                mediaPathImage = cursor.getString(columnIndex);
-                // Set the Image in ImageView for Previewing the Media
-                if (imgResro.getDrawable() == null) {
-                    //Image doesn´t exist.
-                    Toast.makeText(getActivity(), "Please Add Thumbnal Image", Toast.LENGTH_SHORT).show();
-                } else {
-                    imgResro.setImageBitmap(BitmapFactory.decodeFile(mediaPathImage));
-                    Map<String, RequestBody> map = new HashMap<>();
-                    File file = null;
+        if (requestCode == GALLERY) {
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
 
 
-                    try {
-                        file = new File(mediaPathImage);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    RequestBody requestBody = null;
-                    try {
-                        assert file != null;
-                        requestBody = RequestBody.create(MediaType.parse("*/*"), file);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    RequestBody id = RequestBody.create(MediaType.parse("text/plain"), "" + resultGetRestoInfoById_.getId());
-
-                    viewDialog.show();
-
-                    if (file != null) {
-                        map.put("user_photo\"; filename=\"" + file.getName() + "\"", requestBody);
-                        map.put("id", id);
-                        Log.e("Params", map + "");
-                        ApiConfig getResponse = AppConfig.getRetrofit().create(ApiConfig.class);
-                        Call<ServerResponse> call = getResponse.upload("application/json", map);
-                        call.enqueue(new Callback<ServerResponse>() {
-                            @Override
-                            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                                ServerResponse serverResponse = response.body();
-                                if (serverResponse != null && serverResponse.getError() == false) {
-                                    Log.e("TAG", "Product : " + new Gson().toJson(response.body()));
+                imgResro.setImageBitmap(bitmap);
+                Map<String, RequestBody> map = new HashMap<>();
+                File file = null;
 
 
-                                    Toast.makeText(getActivity(), serverResponse.getMsg(), Toast.LENGTH_SHORT).show();
+                try {
+                    file = new File(selectedImagePath);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                RequestBody requestBody = null;
+                try {
+                    assert file != null;
+                    requestBody = RequestBody.create(MediaType.parse("*/*"), file);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                RequestBody id = RequestBody.create(MediaType.parse("text/plain"), "" + resultGetRestoInfoById_.getId());
+
+                showProgressDialog();
+
+                if (file != null) {
+                    map.put("user_photo\"; filename=\"" + file.getName() + "\"", requestBody);
+                    map.put("id", id);
+                    Log.e("Params", map + "");
+                    ApiConfig getResponse = AppConfig.getRetrofit().create(ApiConfig.class);
+                    Call<ServerResponse> call = getResponse.upload("application/json", map);
+                    call.enqueue(new Callback<ServerResponse>() {
+                        @Override
+                        public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                            ServerResponse serverResponse = response.body();
+                            if (serverResponse != null && serverResponse.getError() == false) {
+                                Log.e("TAG", "Product : " + new Gson().toJson(response.body()));
+
+                                hideProgressDialog();
+                                Toast.makeText(getActivity(), serverResponse.getMsg(), Toast.LENGTH_SHORT).show();
 
 
-                                } else {
-                                    JSONObject jObjError = null;
-                                    try {
-                                        jObjError = new JSONObject(response.errorBody().string());
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    try {
-                                        Log.e("TAG", "PO=> Error " + jObjError.getJSONObject("errors") + "");
-                                        Toast.makeText(getActivity(), jObjError.getJSONObject("errors") + "", Toast.LENGTH_LONG).show();
-
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-
-
+                            } else if (serverResponse != null && serverResponse.getError() == true) {
+                                Toast.makeText(getActivity(), serverResponse.getMsg(), Toast.LENGTH_SHORT).show();
+                                hideProgressDialog();
+                            } else {
+                                JSONObject jObjError = null;
+                                try {
+                                    jObjError = new JSONObject(response.errorBody().string());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-                                viewDialog.dismiss();
+                                try {
+                                    Log.e("TAG", "PO=> Error " + jObjError.getJSONObject("errors") + "");
+                                    Toast.makeText(getActivity(), jObjError.getJSONObject("errors") + "", Toast.LENGTH_LONG).show();
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
                             }
+                            hideProgressDialog();
+                        }
 
-                            @Override
-                            public void onFailure(Call<ServerResponse> call, Throwable t) {
-                                viewDialog.dismiss();
-                                Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onFailure(Call<ServerResponse> call, Throwable t) {
+                            hideProgressDialog();
+                            Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
 
-                            }
-                        });
+                        }
+                    });
 
-                    } else {
-
-                    }
+                } else {
 
                 }
-                cursor.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (requestCode == CAMERA) {
+            bitmap = (Bitmap) data.getExtras().get("data");
+            imgResro.setImageBitmap(bitmap);
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+            File wallpaperDirectory = new File(
+                    Environment.getExternalStorageDirectory() + IMAGE_DIRECTORY);
+            // have the object build the directory structure, if needed.
+            if (!wallpaperDirectory.exists()) {
+                wallpaperDirectory.mkdirs();
+            }
+            try {
+                String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
+                File f = new File(wallpaperDirectory, timeStamp + ".jpg");
+                path = String.valueOf(f);
+                f.createNewFile();
+                FileOutputStream fo = new FileOutputStream(f);
+                fo.write(bytes.toByteArray());
+                MediaScannerConnection.scanFile(getActivity(),
+                        new String[]{f.getPath()},
+                        new String[]{"image/jpeg"}, null);
+                // loadImage(f);
+                fo.close();
+                Log.d("TAG", "File Saved::--->" + f.getAbsolutePath());
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            Map<String, RequestBody> map = new HashMap<>();
+            File fileCamera = null;
+
+
+            try {
+                fileCamera = new File(path);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            RequestBody requestBody = null;
+            try {
+                assert fileCamera != null;
+                requestBody = RequestBody.create(MediaType.parse("*/*"), fileCamera);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            RequestBody id = RequestBody.create(MediaType.parse("text/plain"), "" + resultGetRestoInfoById_.getId());
+
+            showProgressDialog();
+
+            if (fileCamera != null) {
+                map.put("user_photo\"; filename=\"" + fileCamera.getName() + "\"", requestBody);
+                map.put("id", id);
+                Log.e("Params", map + "");
+                ApiConfig getResponse = AppConfig.getRetrofit().create(ApiConfig.class);
+                Call<ServerResponse> call = getResponse.upload("application/json", map);
+                call.enqueue(new Callback<ServerResponse>() {
+                    @Override
+                    public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                        ServerResponse serverResponse = response.body();
+                        if (serverResponse != null && serverResponse.getError() == false) {
+                            Log.e("TAG", "Product : " + new Gson().toJson(response.body()));
+
+                            hideProgressDialog();
+                            Toast.makeText(getActivity(), serverResponse.getMsg(), Toast.LENGTH_SHORT).show();
+
+
+                        } else if (serverResponse != null && serverResponse.getError() == true) {
+                            Toast.makeText(getActivity(), serverResponse.getMsg(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            JSONObject jObjError = null;
+                            try {
+                                jObjError = new JSONObject(response.errorBody().string());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                Log.e("TAG", "PO=> Error " + jObjError.getJSONObject("errors") + "");
+                                Toast.makeText(getActivity(), jObjError.getJSONObject("errors") + "", Toast.LENGTH_LONG).show();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                        viewDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ServerResponse> call, Throwable t) {
+                        viewDialog.dismiss();
+                        Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
 
             } else {
-                Toast.makeText(getActivity(), "You haven't picked Image", Toast.LENGTH_LONG).show();
+
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
 
         }
     }
 
+    private String getPath(Uri uri) {
+        // just some safety built in
+        if (uri == null) {
+            return null;
+        }
+        // try to retrieve the image from the media store first
+        // this will only work for images selected from gallery
+        String[] projection = {MediaStore.Images.Media.DATA};
+        @SuppressWarnings("deprecation")
+        Cursor cursor = getActivity().managedQuery(uri, projection, null, null,
+                null);
+        if (cursor != null) {
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+        // this is our fallback here
+        return uri.getPath();
+    }
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -367,9 +608,83 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
         final EditText editOld_p = dialog.findViewById(R.id.editOld_p);
         final EditText editNew_p = dialog.findViewById(R.id.editNew_p);
         final EditText editC_p = dialog.findViewById(R.id.editC_p);
+        final ImageView show_pass_btn = dialog.findViewById(R.id.show_pass_btn);
+        final ImageView show_pass_new = dialog.findViewById(R.id.show_pass_new);
+        final ImageView show_pass_confirm = dialog.findViewById(R.id.show_pass_confirm);
         final Button btn_update = dialog.findViewById(R.id.btn_update);
         editOld_p.setText(resultGetRestoInfoById_.getPassword() + "");
+        show_pass_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowHidePass(v);
+            }
 
+            private void ShowHidePass(View v) {
+                if (v.getId() == R.id.show_pass_btn) {
+
+                    if (editOld_p.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())) {
+                        ((ImageView) (v)).setImageResource(R.drawable.ic_baseline_remove_red_eye_24);
+
+                        //Show Password
+                        editOld_p.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    } else {
+                        ((ImageView) (v)).setImageResource(R.drawable.ic_baseline_visibility_off_24);
+
+                        //Hide Password
+                        editOld_p.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+                    }
+                }
+            }
+        });
+        show_pass_new.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowHidePass(v);
+            }
+
+            private void ShowHidePass(View v) {
+                if (v.getId() == R.id.show_pass_new) {
+
+                    if (editNew_p.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())) {
+                        ((ImageView) (v)).setImageResource(R.drawable.ic_baseline_remove_red_eye_24);
+
+                        //Show Password
+                        editNew_p.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    } else {
+                        ((ImageView) (v)).setImageResource(R.drawable.ic_baseline_visibility_off_24);
+
+                        //Hide Password
+                        editNew_p.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+                    }
+                }
+            }
+        });
+        show_pass_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowHidePass(v);
+            }
+
+            private void ShowHidePass(View v) {
+                if (v.getId() == R.id.show_pass_confirm) {
+
+                    if (editC_p.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())) {
+                        ((ImageView) (v)).setImageResource(R.drawable.ic_baseline_remove_red_eye_24);
+
+                        //Show Password
+                        editC_p.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    } else {
+                        ((ImageView) (v)).setImageResource(R.drawable.ic_baseline_visibility_off_24);
+
+                        //Hide Password
+                        editC_p.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+                    }
+                }
+            }
+        });
 
         btn_update.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -398,7 +713,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("old_password", editOld + "");
                     hashMap.put("password", editNew + "");
-                    hashMap.put("cpassword", editC_p + "");
+                    hashMap.put("cpassword", editConfirm + "");
                     hashMap.put("id", resultGetRestoInfoById_.getId());
 
 

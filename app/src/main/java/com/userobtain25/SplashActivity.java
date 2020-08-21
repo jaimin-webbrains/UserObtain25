@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
@@ -31,10 +32,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.userobtain25.ui.LoginActivity;
+import com.userobtain25.ui.HomeActivity;
 import com.userobtain25.ui.SelectionActivity;
 import com.userobtain25.utils.AppPreferences;
-
 
 import java.util.Locale;
 
@@ -43,15 +43,15 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 public class SplashActivity extends AppCompatActivity implements LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
+    static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int PERMISSION_REQUEST_CODE = 200;
     final String TAG = "GPS";
-    private long UPDATE_INTERVAL = 2
-            * 1000;  /* 10 secs */
-    private long FASTEST_INTERVAL = 2000; /* 2 sec */
-    static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     GoogleApiClient gac;
     LocationRequest locationRequest;
     String newToken;
+    private long UPDATE_INTERVAL = 2
+            * 1000;  /* 10 secs */
+    private long FASTEST_INTERVAL = 2000; /* 2 sec */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +62,7 @@ public class SplashActivity extends AppCompatActivity implements LocationListene
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 newToken = instanceIdResult.getToken();
+                AppPreferences.setToken(SplashActivity.this, newToken);
                 Log.e("TOKEN: ", newToken);
             }
         });
@@ -83,16 +84,26 @@ public class SplashActivity extends AppCompatActivity implements LocationListene
         if (!checkPermission()) {
 
             requestPermission();
-        }
-        else {
+        } else {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    SharedPreferences settings = getSharedPreferences("UserObtain", 0);
+//Get "hasLoggedIn" value. If the value doesn't exist yet false is returned
+                    boolean hasLoggedIn = settings.getBoolean("hasLoggedIn", false);
 
-                    Intent i = new Intent(SplashActivity.this, SelectionActivity.class);
-                    i.putExtra("updateToken",newToken);
-                    startActivity(i);
-                    finish();
+                    if (hasLoggedIn) {
+                        //Go directly to main activity.
+                        Intent i = new Intent(SplashActivity.this, HomeActivity.class);
+                        startActivity(i);
+                        finish();
+                    } else {
+                        // Show Login Activity
+                        Intent i = new Intent(SplashActivity.this, SelectionActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
+
                 }
             }, 2000);
         }
@@ -192,6 +203,7 @@ public class SplashActivity extends AppCompatActivity implements LocationListene
                 });
         dialog.show();
     }
+
     @Override
     public void onLocationChanged(Location location) {
 //        this.location = loc;

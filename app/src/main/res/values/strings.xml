@@ -18,5 +18,11 @@
     <string name="privacy">By logging in you agree to Daily Deals Terms of services,Privacy Policy and Content Policy</string>
     <string name="later">I\'ll log in later</string>
     <string name="login">Please Login &amp; Try Again..</string>
-
+    <string name="buy">You\'ve To Purchase Package to USE COUPON</string>
+    <string name="sorry">Sorry!</string>
+    <string name="code">COUPON CODE</string>
+    <string name="offer">Bamper Offer</string>
+    <string name="start">Package Starts</string>
+    <string name="end">Package End</string>
+    <string name="date">Date &amp; Time</string>
 </resources>

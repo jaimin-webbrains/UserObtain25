@@ -11,87 +11,54 @@ public class ResultFrontLogin {
     @SerializedName("name")
     @Expose
     private String name;
-    @SerializedName("contact_person")
-    @Expose
-    private String contactPerson;
-    @SerializedName("adharcard")
-    @Expose
-    private String adharcard;
-    @SerializedName("gst")
-    @Expose
-    private String gst;
-    @SerializedName("mobile")
-    @Expose
-    private String mobile;
     @SerializedName("email")
     @Expose
     private String email;
+    @SerializedName("mobile")
+    @Expose
+    private String mobile;
     @SerializedName("password")
     @Expose
     private String password;
     @SerializedName("address")
     @Expose
     private String address;
+    @SerializedName("user_photo")
+    @Expose
+    private Object userPhoto;
     @SerializedName("turms_and_condition")
     @Expose
     private Object turmsAndCondition;
-    @SerializedName("resto_photo")
-    @Expose
-    private String restoPhoto;
-    @SerializedName("contact_photo")
-    @Expose
-    private Object contactPhoto;
-    @SerializedName("bank_name")
-    @Expose
-    private Object bankName;
-    @SerializedName("bank_branch")
-    @Expose
-    private Object bankBranch;
-    @SerializedName("account_holder_name")
-    @Expose
-    private Object accountHolderName;
-    @SerializedName("account_number")
-    @Expose
-    private Object accountNumber;
-    @SerializedName("ifsc_code")
-    @Expose
-    private Object ifscCode;
-    @SerializedName("created_by")
-    @Expose
-    private Object createdBy;
     @SerializedName("created_at")
     @Expose
     private String createdAt;
-    @SerializedName("updated_by")
-    @Expose
-    private Object updatedBy;
     @SerializedName("updated_at")
     @Expose
-    private String updatedAt;
-    @SerializedName("deleted_by")
-    @Expose
-    private Object deletedBy;
+    private Object updatedAt;
     @SerializedName("deleted_at")
     @Expose
     private Object deletedAt;
-    @SerializedName("registered_from")
-    @Expose
-    private String registeredFrom;
     @SerializedName("status")
     @Expose
     private String status;
-    @SerializedName("latitude")
+    @SerializedName("paid")
     @Expose
-    private String latitude;
-    @SerializedName("longitude")
+    private Object paid;
+    @SerializedName("package_id")
     @Expose
-    private String longitude;
+    private Object packageId;
+    @SerializedName("order_id")
+    @Expose
+    private Object orderId;
+    @SerializedName("paid_date")
+    @Expose
+    private Object paidDate;
+    @SerializedName("user_tocken")
+    @Expose
+    private String userTocken;
     @SerializedName("login_time")
     @Expose
     private Integer loginTime;
-    @SerializedName("food_license")
-    @Expose
-    private String foodLicense;
 
     public String getId() {
         return id;
@@ -109,28 +76,12 @@ public class ResultFrontLogin {
         this.name = name;
     }
 
-    public String getContactPerson() {
-        return contactPerson;
+    public String getEmail() {
+        return email;
     }
 
-    public void setContactPerson(String contactPerson) {
-        this.contactPerson = contactPerson;
-    }
-
-    public String getAdharcard() {
-        return adharcard;
-    }
-
-    public void setAdharcard(String adharcard) {
-        this.adharcard = adharcard;
-    }
-
-    public String getGst() {
-        return gst;
-    }
-
-    public void setGst(String gst) {
-        this.gst = gst;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getMobile() {
@@ -139,14 +90,6 @@ public class ResultFrontLogin {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPassword() {
@@ -165,76 +108,20 @@ public class ResultFrontLogin {
         this.address = address;
     }
 
+    public Object getUserPhoto() {
+        return userPhoto;
+    }
+
+    public void setUserPhoto(Object userPhoto) {
+        this.userPhoto = userPhoto;
+    }
+
     public Object getTurmsAndCondition() {
         return turmsAndCondition;
     }
 
     public void setTurmsAndCondition(Object turmsAndCondition) {
         this.turmsAndCondition = turmsAndCondition;
-    }
-
-    public String getRestoPhoto() {
-        return restoPhoto;
-    }
-
-    public void setRestoPhoto(String restoPhoto) {
-        this.restoPhoto = restoPhoto;
-    }
-
-    public Object getContactPhoto() {
-        return contactPhoto;
-    }
-
-    public void setContactPhoto(Object contactPhoto) {
-        this.contactPhoto = contactPhoto;
-    }
-
-    public Object getBankName() {
-        return bankName;
-    }
-
-    public void setBankName(Object bankName) {
-        this.bankName = bankName;
-    }
-
-    public Object getBankBranch() {
-        return bankBranch;
-    }
-
-    public void setBankBranch(Object bankBranch) {
-        this.bankBranch = bankBranch;
-    }
-
-    public Object getAccountHolderName() {
-        return accountHolderName;
-    }
-
-    public void setAccountHolderName(Object accountHolderName) {
-        this.accountHolderName = accountHolderName;
-    }
-
-    public Object getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(Object accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public Object getIfscCode() {
-        return ifscCode;
-    }
-
-    public void setIfscCode(Object ifscCode) {
-        this.ifscCode = ifscCode;
-    }
-
-    public Object getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Object createdBy) {
-        this.createdBy = createdBy;
     }
 
     public String getCreatedAt() {
@@ -245,28 +132,12 @@ public class ResultFrontLogin {
         this.createdAt = createdAt;
     }
 
-    public Object getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(Object updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
-    public String getUpdatedAt() {
+    public Object getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(Object updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Object getDeletedBy() {
-        return deletedBy;
-    }
-
-    public void setDeletedBy(Object deletedBy) {
-        this.deletedBy = deletedBy;
     }
 
     public Object getDeletedAt() {
@@ -277,14 +148,6 @@ public class ResultFrontLogin {
         this.deletedAt = deletedAt;
     }
 
-    public String getRegisteredFrom() {
-        return registeredFrom;
-    }
-
-    public void setRegisteredFrom(String registeredFrom) {
-        this.registeredFrom = registeredFrom;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -293,20 +156,44 @@ public class ResultFrontLogin {
         this.status = status;
     }
 
-    public String getLatitude() {
-        return latitude;
+    public Object getPaid() {
+        return paid;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
+    public void setPaid(Object paid) {
+        this.paid = paid;
     }
 
-    public String getLongitude() {
-        return longitude;
+    public Object getPackageId() {
+        return packageId;
     }
 
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
+    public void setPackageId(Object packageId) {
+        this.packageId = packageId;
+    }
+
+    public Object getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Object orderId) {
+        this.orderId = orderId;
+    }
+
+    public Object getPaidDate() {
+        return paidDate;
+    }
+
+    public void setPaidDate(Object paidDate) {
+        this.paidDate = paidDate;
+    }
+
+    public String getUserTocken() {
+        return userTocken;
+    }
+
+    public void setUserTocken(String userTocken) {
+        this.userTocken = userTocken;
     }
 
     public Integer getLoginTime() {
@@ -315,13 +202,5 @@ public class ResultFrontLogin {
 
     public void setLoginTime(Integer loginTime) {
         this.loginTime = loginTime;
-    }
-
-    public String getFoodLicense() {
-        return foodLicense;
-    }
-
-    public void setFoodLicense(String foodLicense) {
-        this.foodLicense = foodLicense;
     }
 }

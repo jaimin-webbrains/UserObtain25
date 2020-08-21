@@ -219,7 +219,23 @@ public class GreatOfferActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (loginModel != null) {
-                        UseCoupon();
+                        if (loginModel.getSessionData().getPackageId() != null) {
+                            UseCoupon(v);
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(GreatOfferActivity.this);
+                            ViewGroup viewGroup = findViewById(android.R.id.content);
+                            View dialogView = LayoutInflater.from(v.getContext()).inflate(R.layout.custom_package, viewGroup, false);
+                            builder.setView(dialogView);
+                            final AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                            dialogView.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                        }
+
                     } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(GreatOfferActivity.this);
                         ViewGroup viewGroup = findViewById(android.R.id.content);
@@ -237,11 +253,8 @@ public class GreatOfferActivity extends AppCompatActivity {
                     }
 
                 }
-            });
 
-        }
-
-        private void UseCoupon() {
+        private void UseCoupon(final View view) {
             HashMap<String, String> hashMap = new HashMap<>();
             hashMap.put("user_id", loginModel.getSessionData().getId() + "");
             hashMap.put("restaurant_id", restro_id + "");
@@ -256,8 +269,20 @@ public class GreatOfferActivity extends AppCompatActivity {
                     hideProgressDialog();
                     Log.e("TAG", "ChatV_Response : " + new Gson().toJson(response.body()));
                     if (object != null && object.getError() == false) {
-                        // object.getResultGenerateNumberToUseCoupon().getCode();
-                        Toast.makeText(getApplicationContext(), object.getMessage(), Toast.LENGTH_SHORT).show();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(GreatOfferActivity.this);
+                        ViewGroup viewGroup = findViewById(android.R.id.content);
+                        View dialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.custom_coupon, viewGroup, false);
+                        builder.setView(dialogView);
+                        final AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                        TextView txtCode=alertDialog.findViewById(R.id.txtCode);
+                        txtCode.setText(object.getResultGenerateNumberToUseCoupon().getCode());
+                        dialogView.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                alertDialog.dismiss();
+                            }
+                        });
 
                     } else if (object != null && object.getError() == true) {
                         // Toast.makeText(getActivity(), object.getMessage(), Toast.LENGTH_SHORT).show();
@@ -292,6 +317,11 @@ public class GreatOfferActivity extends AppCompatActivity {
                 }
             });
         }
+
+            });
+
+        }
+
 
 
         @Override

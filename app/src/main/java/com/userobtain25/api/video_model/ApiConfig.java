@@ -17,12 +17,12 @@ public interface ApiConfig {
             @PartMap Map<String, RequestBody> map
     );
 
-    @Multipart
+    /*@Multipart
     @POST("RestomultiPhoto")
     Call<ServerResponse> RestomultiPhotoUpload(
             @Header("Accept") String authorization,
             @PartMap Map<String, RequestBody> map
-    );
+    );*/
 
 
 }

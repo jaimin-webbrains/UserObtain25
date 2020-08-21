@@ -19,4 +19,12 @@
         android:icon="@drawable/account"
         android:title="PROFILE"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/nav_login"
+        android:enabled="true"
+        android:icon="@drawable/account"
+        android:title="LOGIN"
+        app:showAsAction="ifRoom" />
+
 </menu>

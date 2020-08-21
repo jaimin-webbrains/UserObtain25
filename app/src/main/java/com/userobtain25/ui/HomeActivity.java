@@ -43,6 +43,7 @@ import com.userobtain25.model.login.LoginModel;
 import com.userobtain25.model.term.ResultGetTurms;
 import com.userobtain25.ui.home.account.MyAccountFragment;
 import com.userobtain25.ui.home.goout.HomeFragment;
+import com.userobtain25.ui.home.login.LoginFragment;
 import com.userobtain25.ui.home.search.SearchFragment;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
@@ -68,6 +69,7 @@ public class HomeActivity extends AppCompatActivity implements LocationListener,
     final String TAG = "GPS";
     protected ViewDialog viewDialog;
     Dialog dialog;
+    String type;
     LoginModel loginModel;
     GoogleApiClient gac;
     LocationRequest locationRequest;
@@ -80,6 +82,8 @@ public class HomeActivity extends AppCompatActivity implements LocationListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        type = getIntent().getStringExtra("type");
+
         loginModel = PrefUtils.getUser(HomeActivity.this);
         viewDialog = new ViewDialog(HomeActivity.this);
         viewDialog.setCancelable(false);
@@ -102,8 +106,10 @@ public class HomeActivity extends AppCompatActivity implements LocationListener,
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         if (loginModel != null) {
             bottomNavigationView.getMenu().getItem(2).setVisible(true);
+            bottomNavigationView.getMenu().getItem(3).setVisible(false);
         } else {
             bottomNavigationView.getMenu().getItem(2).setVisible(false);
+            bottomNavigationView.getMenu().getItem(3).setVisible(true);
         }
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -121,11 +127,25 @@ public class HomeActivity extends AppCompatActivity implements LocationListener,
                         fragment = new MyAccountFragment();
 
                         break;
+                    case R.id.nav_login:
+                        fragment = new LoginFragment();
+
+                        break;
+
                 }
                 return loadFragment(fragment);
             }
         });
-        GetTerm();
+        if (loginModel != null) {
+            if (type.equals("0")) {
+                GetTerm();
+            } else if (type.equals("1")) {
+
+            }
+
+        } else {
+
+        }
 
     }
 
@@ -384,6 +404,7 @@ public class HomeActivity extends AppCompatActivity implements LocationListener,
 
                         public void onClick(DialogInterface arg0, int arg1) {
                             moveTaskToBack(true);
+                            // finish();
                         }
                     }).create().show();
 

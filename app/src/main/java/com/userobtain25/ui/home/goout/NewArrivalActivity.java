@@ -194,6 +194,7 @@ public class NewArrivalActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent i = new Intent(NewArrivalActivity.this, Near_deal_deailActivity.class);
                     i.putExtra("restro_id", datum.getId());
+                    i.putExtra("type", "2");//2:new arrival
                     startActivity(i);
                 }
             });

@@ -85,6 +85,7 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
                                 android:orientation="vertical">
 
 
@@ -101,7 +102,7 @@
                                     style="@style/customfontstyle"
                                     android:layout_width="match_parent"
                                     android:layout_height="50dp"
-                                    android:layout_marginTop="@dimen/spacing_large"
+                                    android:layout_margin="5dp"
                                     android:background="@drawable/upperimage"
                                     android:focusableInTouchMode="true"
                                     android:imeOptions="actionNext"
@@ -113,6 +114,7 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
                                 android:orientation="vertical">
 
 
@@ -129,7 +131,38 @@
                                     style="@style/customfontstyle"
                                     android:layout_width="match_parent"
                                     android:layout_height="50dp"
-                                    android:layout_marginTop="@dimen/spacing_large"
+                                    android:layout_margin="5dp"
+                                    android:background="@drawable/upperimage"
+                                    android:focusableInTouchMode="true"
+                                    android:imeOptions="actionNext"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:textColor="@color/overlay_dark_40"
+                                    android:textColorHint="@color/white" />
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:orientation="vertical">
+
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Select Time"
+                                    style="@style/customfontstyle"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textSize="@dimen/text_size_large" />
+
+                                <androidx.appcompat.widget.AppCompatEditText
+                                    android:id="@+id/editTime"
+                                    style="@style/customfontstyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp"
+                                    android:layout_margin="5dp"
                                     android:background="@drawable/upperimage"
                                     android:focusableInTouchMode="true"
                                     android:imeOptions="actionDone"
@@ -138,8 +171,6 @@
                                     android:textColor="@color/overlay_dark_40"
                                     android:textColorHint="@color/white" />
                             </LinearLayout>
-
-
 
 
 

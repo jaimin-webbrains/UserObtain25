@@ -6,8 +6,11 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.userobtain25.model.SuccessModel;
+import com.userobtain25.model.account.ResponseAcceptedOrRejected;
 import com.userobtain25.model.account.ResultGetRestoInfoById;
 import com.userobtain25.model.account.ResultGreatOffers;
+import com.userobtain25.model.account.ResultPackages;
+import com.userobtain25.model.account.ResultUserPackageInfo;
 import com.userobtain25.model.goout.greatoffer.ResultGenerateNumberToUseCoupon;
 import com.userobtain25.model.goout.greatoffer.ResultUserCoupons;
 import com.userobtain25.model.goout.neardeal.ResultDisplayActiveRestaurantCoupon;
@@ -168,6 +171,28 @@ public class RetrofitHelper {
         @Headers({"Accept: application/json"})
         @POST("ChangePasswordUser")
         Call<SuccessModel> ChangePasswordUser(@FieldMap HashMap<String, String> hashMap);
+
+
+        @FormUrlEncoded
+        @Headers({"Accept: application/json"})
+        @POST("Packages")
+        Call<ResultPackages> Packages(@FieldMap HashMap<String, String> hashMap);
+
+        @FormUrlEncoded
+        @Headers({"Accept: application/json"})
+        @POST("UpdatePaymentInfo")
+        Call<SuccessModel> UpdatePaymentInfo(@FieldMap HashMap<String, String> hashMap);
+
+
+        @FormUrlEncoded
+        @Headers({"Accept: application/json"})
+        @POST("DisplayUserRequest")
+        Call<ResponseAcceptedOrRejected> RestoDisplayUserRequestAcceptedOrRejected(@FieldMap HashMap<String, String> hashMap);
+
+        @FormUrlEncoded
+        @Headers({"Accept: application/json"})
+        @POST("UserPackageInfo")
+        Call<ResultUserPackageInfo> UserPackageInfo(@FieldMap HashMap<String, String> hashMap);
 
         /////go out//////
 

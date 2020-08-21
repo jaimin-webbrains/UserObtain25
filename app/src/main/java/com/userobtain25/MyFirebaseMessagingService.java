@@ -4,6 +4,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 
@@ -11,11 +13,13 @@ import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.userobtain25.ui.home.account.NotificationActivity;
 
 
-
-public class MyFirebaseMessagingService extends FirebaseMessagingService
-{
+public class MyFirebaseMessagingService extends FirebaseMessagingService {
+    AudioManager am;
+    boolean isRinging;
+    Ringtone ringtone;
 
     @Override
     public void onMessageReceived(RemoteMessage message) {
@@ -26,29 +30,50 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
     private void sendMyNotification(String message) {
 
         //On click of notification it redirect to this Activity
-       /* Intent intent = new Intent(this, NotificationActivity.class);
+        Intent intent = new Intent(this, NotificationActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);*/
-//        Uri sound= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//        builder.setSound(sound);
-        Uri soundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALL);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("My Firebase Push notification")
-                .setContentText(message)
-                .setAutoCancel(false)
-                .setSound(soundUri)
-                .setNumber(50);
-               // .setContentIntent(pendingIntent);
-//        Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID)
-//                .setContentTitle("New Messages")
-//                .setContentText("You've received 3 new messages.")
-//                .setSmallIcon(R.drawable.ic_notify_status)
-//                .setNumber(messageCount)
-//                .build();
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        switch (am.getRingerMode()) {
+            case AudioManager.RINGER_MODE_SILENT:
+                playSound();
+                break;
+            case AudioManager.RINGER_MODE_VIBRATE:
+                playSound();
+                break;
+            case AudioManager.RINGER_MODE_NORMAL:
+                Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALL);
+                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle("My Firebase Push notification")
+                        .setContentText(message)
+                        .setAutoCancel(false)
+                        .setSound(soundUri)
+                        .setNumber(50);
 
-        notificationManager.notify(0, notificationBuilder.build());
+
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                notificationManager.notify(0, notificationBuilder.build());
+                break;
+        }
+
+
     }
+
+    private void playSound() {
+
+        int volume = am.getStreamVolume(AudioManager.STREAM_ALARM);
+        if (volume == 0)
+            volume = am.getStreamMaxVolume(AudioManager.STREAM_ALARM);
+        am.setStreamVolume(AudioManager.STREAM_ALARM, volume, AudioManager.FLAG_ALLOW_RINGER_MODES);
+        ringtone = RingtoneManager.getRingtone(getApplicationContext(), Uri.parse(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI));
+        if (ringtone != null) {
+            ringtone.setStreamType(AudioManager.STREAM_ALARM);
+            ringtone.play();
+            isRinging = true;
+        }
+    }
+
 }

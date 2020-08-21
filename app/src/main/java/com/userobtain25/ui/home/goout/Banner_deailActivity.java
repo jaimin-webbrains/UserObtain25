@@ -3,6 +3,7 @@ package com.userobtain25.ui.home.goout;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,7 +45,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -58,7 +59,7 @@ public class Banner_deailActivity extends AppCompatActivity {
     LinearLayout l1Horizontal;
     String discount;
     Dialog dialog;
-    private int mYear, mMonth, mDay;
+    private int mYear, mMonth, mDay, mHour, mMinute;
     private RestroAdapter restroAdapter;
     private ArrayList<ResultBannerCoupon_> resultDisplayActiveRestaurantCoupon_s = new ArrayList<>();
 
@@ -106,7 +107,7 @@ public class Banner_deailActivity extends AppCompatActivity {
                     recyclerviewNear.setAdapter(restroAdapter);
 
                 } else if (object != null && object.getError() == true) {
-                    Toast.makeText(Banner_deailActivity.this, object.getMessage(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(Banner_deailActivity.this, object.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
 
 
@@ -161,7 +162,7 @@ public class Banner_deailActivity extends AppCompatActivity {
     }
 
     public class RestroAdapter extends RecyclerView.Adapter<RestroAdapter.MyViewHolder> {
-        String resro_id,member;
+        String resro_id, member;
         private ArrayList<ResultBannerCoupon_> moviesList;
 
         public RestroAdapter(ArrayList<ResultBannerCoupon_> moviesList) {
@@ -213,7 +214,23 @@ public class Banner_deailActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (loginModel != null) {
-                        SendRequest();
+                        if (loginModel.getSessionData().getPackageId() != null) {
+                            SendRequest();
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Banner_deailActivity.this);
+                            ViewGroup viewGroup = findViewById(android.R.id.content);
+                            View dialogView = LayoutInflater.from(v.getContext()).inflate(R.layout.custom_package, viewGroup, false);
+                            builder.setView(dialogView);
+                            final AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                            dialogView.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                        }
+
                     } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(Banner_deailActivity.this);
                         ViewGroup viewGroup = findViewById(android.R.id.content);
@@ -225,6 +242,7 @@ public class Banner_deailActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 alertDialog.dismiss();
+
                             }
                         });
 
@@ -249,6 +267,7 @@ public class Banner_deailActivity extends AppCompatActivity {
 
             final EditText editN_m = dialog.findViewById(R.id.editN_m);
             final EditText editDate = dialog.findViewById(R.id.editDate);
+            final EditText editTime = dialog.findViewById(R.id.editTime);
             final Button btn_update = dialog.findViewById(R.id.btn_update);
             editDate.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -275,12 +294,36 @@ public class Banner_deailActivity extends AppCompatActivity {
 
                 }
             });
+            editTime.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Get Current Time
+                    final Calendar c = Calendar.getInstance();
+                    mHour = c.get(Calendar.HOUR_OF_DAY);
+                    mMinute = c.get(Calendar.MINUTE);
+
+                    // Launch Time Picker Dialog
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(Banner_deailActivity.this,
+                            new TimePickerDialog.OnTimeSetListener() {
+
+                                @Override
+                                public void onTimeSet(TimePicker view, int hourOfDay,
+                                                      int minute) {
+
+                                    editTime.setText(hourOfDay + ":" + minute);
+                                }
+                            }, mHour, mMinute, false);
+                    timePickerDialog.show();
+
+                }
+            });
 
             btn_update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final String member = editN_m.getText().toString().trim();
                     final String date = editDate.getText().toString().trim();
+                    final String time = editTime.getText().toString().trim();
 
 
                     if (member.isEmpty()) {
@@ -292,13 +335,18 @@ public class Banner_deailActivity extends AppCompatActivity {
                         editDate.setError("Date Required");
                         editDate.requestFocus();
                         return;
+                    }
+                    if (time.isEmpty()) {
+                        editTime.setError("Time Required");
+                        editTime.requestFocus();
+                        return;
                     } else {
 
                         HashMap<String, String> hashMap = new HashMap<>();
                         hashMap.put("user_id", loginModel.getSessionData().getId() + "");
                         hashMap.put("resto_id", resro_id + "");
                         hashMap.put("num_member", member + "");
-                        hashMap.put("date_and_time", date + "");
+                        hashMap.put("date_and_time", date + time + "");
                         showProgressDialog();
                         Log.e("GAYA", hashMap + "");
                         Call<SuccessModel> marqueCall = RetrofitHelper.createService(RetrofitHelper.Service.class).UserRequest(hashMap);

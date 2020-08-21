@@ -1,6 +1,8 @@
 package com.userobtain25.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.userobtain25.model.login.LoginModel;
 
@@ -27,5 +29,6 @@ public class PrefUtils {
         complexPreferences.clearObject();
         complexPreferences.commit();
     }
+
 
 }

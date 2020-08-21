@@ -3,6 +3,7 @@ package com.userobtain25.ui.home.goout;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,6 +38,7 @@ import com.userobtain25.model.goout.neardeal.ResultDisplayActiveRestaurantCoupon
 import com.userobtain25.model.goout.neardeal.ResultDisplayRestoPhoto;
 import com.userobtain25.model.goout.neardeal.ResultDisplayRestoPhoto_;
 import com.userobtain25.model.login.LoginModel;
+import com.userobtain25.utils.AppPreferences;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
 
@@ -57,9 +60,9 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
     protected ViewDialog viewDialog;
     RecyclerView recyclerviewNear, recyclerviewPopular;
     LoginModel loginModel;
-    String restro_id;
+    String restro_id, type;
     Dialog dialog;
-    private int mYear, mMonth, mDay;
+    private int mYear, mMonth, mDay, mHour, mMinute;
     private MyCustomAdapter myCustomAdapter;
     private RestroAdapter restroAdapter;
     private ArrayList<ResultDisplayActiveRestaurantCoupon_> resultDisplayActiveRestaurantCoupon_s = new ArrayList<>();
@@ -75,6 +78,7 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
 
     private void initView() {
         restro_id = getIntent().getStringExtra("restro_id");
+        type = getIntent().getStringExtra("type");
         loginModel = PrefUtils.getUser(Near_deal_deailActivity.this);
         viewDialog = new ViewDialog(Near_deal_deailActivity.this);
         recyclerviewNear = findViewById(R.id.recyclerviewNear);
@@ -110,7 +114,7 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
                     recyclerviewNear.setAdapter(restroAdapter);
 
                 } else if (object != null && object.getError() == true) {
-                    Toast.makeText(Near_deal_deailActivity.this, object.getMessage(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(Near_deal_deailActivity.this, object.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
 
 
@@ -163,7 +167,7 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
                     recyclerviewPopular.setAdapter(myCustomAdapter);
 
                 } else if (object != null && object.getError() == true) {
-                    Toast.makeText(Near_deal_deailActivity.this, object.getMessage(), Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(Near_deal_deailActivity.this, object.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
 
 
@@ -206,7 +210,17 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
 
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        toolbar.setTitle("Near By Deal Detail");
+
+        if (type.equals("0")) {
+            toolbar.setTitle("Near By Deal Detail");
+        } else if (type.equals("1")) {//1:trending
+            toolbar.setTitle("Trending Places Detail");
+        } else if (type.equals("2")) {//2:new arrival
+            toolbar.setTitle("New Arrivals Detail");
+        } else if (type.equals("3")) {
+            toolbar.setTitle("Restaurants Detail");
+        }
+
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,7 +289,23 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
                 @Override
                 public void onClick(View v) {
                     if (loginModel != null) {
-                        SendRequest();
+                        if (loginModel.getSessionData().getPackageId() != null) {
+                            SendRequest();
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Near_deal_deailActivity.this);
+                            ViewGroup viewGroup = findViewById(android.R.id.content);
+                            View dialogView = LayoutInflater.from(v.getContext()).inflate(R.layout.custom_package, viewGroup, false);
+                            builder.setView(dialogView);
+                            final AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                            dialogView.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                        }
+
                     } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(Near_deal_deailActivity.this);
                         ViewGroup viewGroup = findViewById(android.R.id.content);
@@ -287,6 +317,7 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
                             @Override
                             public void onClick(View v) {
                                 alertDialog.dismiss();
+
                             }
                         });
 
@@ -310,6 +341,7 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
 
             final EditText editN_m = dialog.findViewById(R.id.editN_m);
             final EditText editDate = dialog.findViewById(R.id.editDate);
+            final EditText editTime = dialog.findViewById(R.id.editTime);
             final Button btn_update = dialog.findViewById(R.id.btn_update);
             editDate.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -336,12 +368,35 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
 
                 }
             });
+            editTime.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Get Current Time
+                    final Calendar c = Calendar.getInstance();
+                    mHour = c.get(Calendar.HOUR_OF_DAY);
+                    mMinute = c.get(Calendar.MINUTE);
 
+                    // Launch Time Picker Dialog
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(Near_deal_deailActivity.this,
+                            new TimePickerDialog.OnTimeSetListener() {
+
+                                @Override
+                                public void onTimeSet(TimePicker view, int hourOfDay,
+                                                      int minute) {
+
+                                    editTime.setText(hourOfDay + ":" + minute);
+                                }
+                            }, mHour, mMinute, false);
+                    timePickerDialog.show();
+
+                }
+            });
             btn_update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final String member = editN_m.getText().toString().trim();
                     final String date = editDate.getText().toString().trim();
+                    final String time = editTime.getText().toString().trim();
 
 
                     if (member.isEmpty()) {
@@ -353,13 +408,18 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
                         editDate.setError("Date Required");
                         editDate.requestFocus();
                         return;
+                    }
+                    if (time.isEmpty()) {
+                        editTime.setError("Time Required");
+                        editTime.requestFocus();
+                        return;
                     } else {
 
                         HashMap<String, String> hashMap = new HashMap<>();
                         hashMap.put("user_id", loginModel.getSessionData().getId() + "");
                         hashMap.put("resto_id", resro_id + "");
                         hashMap.put("num_member", member + "");
-                        hashMap.put("date_and_time", date + "");
+                        hashMap.put("date_and_time", date + time + "");
                         showProgressDialog();
                         Log.e("GAYA", hashMap + "");
                         Call<SuccessModel> marqueCall = RetrofitHelper.createService(RetrofitHelper.Service.class).UserRequest(hashMap);
