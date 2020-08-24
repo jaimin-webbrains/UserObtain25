@@ -33,11 +33,14 @@ import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 import com.userobtain25.R;
 import com.userobtain25.api.BuildConstants;
 import com.userobtain25.api.RetrofitHelper;
+import com.userobtain25.model.account.ResultGetRestoInfoById;
+import com.userobtain25.model.account.ResultGetRestoInfoById_;
 import com.userobtain25.model.goout.neardeal.ResultNearestRestaurant;
 import com.userobtain25.model.goout.neardeal.ResultNearestRestaurants;
 import com.userobtain25.model.goout.populardeal.ResultGetBanner;
 import com.userobtain25.model.goout.populardeal.ResultGetBanners;
 import com.userobtain25.model.login.LoginModel;
+import com.userobtain25.ui.HomeActivity;
 import com.userobtain25.ui.LoginActivity;
 import com.userobtain25.ui.home.search.SearchFragment;
 import com.userobtain25.utils.AppPreferences;
@@ -63,10 +66,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private static DecimalFormat df = new DecimalFormat("0.000");
     protected ViewDialog viewDialog;
     View TODO;
+    String  package_id;
     AppCompatTextView txtLocation, txtSearch, txtNodata, txtNodata1;
     LinearLayout txtGreat, txtTrending, txtarrival;
     RecyclerView recyclerviewNear, recyclerviewPopular;
     LoginModel loginModel;
+    private ResultGetRestoInfoById_ resultGetRestoInfoById_;
     private MyCustomAdapter myCustomAdapter;
     private NearDealAdapter nearDealAdapter;
     private ArrayList<ResultGetBanner> resultDisplayRestaurantCoupon_s = new ArrayList<>();
@@ -82,6 +87,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onStart() {
         super.onStart();
         GetNearDeals();
+        GetUserInfo();
     }
 
     @Override
@@ -147,6 +153,60 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    private void GetUserInfo() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("user_id", loginModel.getSessionData().getId() + "");
+
+        showProgressDialog();
+        Log.e("GAYA", hashMap + "");
+        Call<ResultGetRestoInfoById> marqueCall = RetrofitHelper.createService(RetrofitHelper.Service.class).GetUserInfoById(hashMap);
+        marqueCall.enqueue(new Callback<ResultGetRestoInfoById>() {
+            @Override
+            public void onResponse(@NonNull Call<ResultGetRestoInfoById> call, @NonNull Response<ResultGetRestoInfoById> response) {
+                ResultGetRestoInfoById object = response.body();
+                hideProgressDialog();
+                Log.e("TAG", "ChatV_Response : " + new Gson().toJson(response.body()));
+                if (object != null && object.getError() == false) {
+
+
+                    resultGetRestoInfoById_ = object.getResultGetRestoInfoById();
+                    package_id = resultGetRestoInfoById_.getPackageId();
+                    AppPreferences.setPackageId(getActivity(), package_id);
+
+
+                } else if (object != null && object.getError() == true) {
+                    // Toast.makeText(getActivity(), object.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+
+
+                    JSONObject jObjError = null;
+                    try {
+                        jObjError = new JSONObject(response.errorBody().string());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        Log.e("TAG", "PO=> Error " + jObjError.getJSONObject("errors") + "");
+                        Toast.makeText(getActivity(), jObjError.getJSONObject("errors") + "", Toast.LENGTH_LONG).show();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResultGetRestoInfoById> call, @NonNull Throwable t) {
+                t.printStackTrace();
+                hideProgressDialog();
+                Log.e("ChatV_Response", t.getMessage() + "");
+            }
+        });
+    }
 
     private void GetNearDeals() {
         HashMap<String, String> hashMap = new HashMap<>();

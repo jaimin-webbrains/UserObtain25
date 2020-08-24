@@ -29,6 +29,7 @@ import com.userobtain25.model.account.ResultGreatOffer;
 import com.userobtain25.model.account.ResultGreatOffers;
 import com.userobtain25.model.goout.greatoffer.ResultGenerateNumberToUseCoupon;
 import com.userobtain25.model.login.LoginModel;
+import com.userobtain25.utils.AppPreferences;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
 
@@ -47,6 +48,7 @@ public class GreatOfferActivity extends AppCompatActivity {
 
     protected ViewDialog viewDialog;
     LoginModel loginModel;
+    String  package_id;
     private RecyclerView recycler_view;
     private MyCustomAdapter myCustomAdapter;
     private ArrayList<ResultGreatOffer> resultDisplayRestaurantCoupon_s = new ArrayList<>();
@@ -61,6 +63,7 @@ public class GreatOfferActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        package_id = AppPreferences.getPackageId(this);
         loginModel = PrefUtils.getUser(GreatOfferActivity.this);
         viewDialog = new ViewDialog(GreatOfferActivity.this);
         viewDialog.setCancelable(false);
@@ -219,7 +222,7 @@ public class GreatOfferActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (loginModel != null) {
-                        if (loginModel.getSessionData().getPackageId() != null) {
+                        if (package_id != null) {
                             UseCoupon(v);
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(GreatOfferActivity.this);

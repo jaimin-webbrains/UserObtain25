@@ -61,6 +61,7 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
     RecyclerView recyclerviewNear, recyclerviewPopular;
     LoginModel loginModel;
     String restro_id, type;
+    String package_id;
     Dialog dialog;
     private int mYear, mMonth, mDay, mHour, mMinute;
     private MyCustomAdapter myCustomAdapter;
@@ -79,6 +80,7 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
     private void initView() {
         restro_id = getIntent().getStringExtra("restro_id");
         type = getIntent().getStringExtra("type");
+        package_id = AppPreferences.getPackageId(this);
         loginModel = PrefUtils.getUser(Near_deal_deailActivity.this);
         viewDialog = new ViewDialog(Near_deal_deailActivity.this);
         recyclerviewNear = findViewById(R.id.recyclerviewNear);
@@ -289,7 +291,7 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
                 @Override
                 public void onClick(View v) {
                     if (loginModel != null) {
-                        if (loginModel.getSessionData().getPackageId() != null) {
+                        if (package_id != null) {
                             SendRequest();
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(Near_deal_deailActivity.this);
@@ -353,17 +355,17 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
                     mDay = c.get(Calendar.DAY_OF_MONTH);
 
 
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(Near_deal_deailActivity.this,
-                            new DatePickerDialog.OnDateSetListener() {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(Near_deal_deailActivity.this, R.style.DialogTheme
+                            , new DatePickerDialog.OnDateSetListener() {
 
-                                @Override
-                                public void onDateSet(DatePicker view, int year,
-                                                      int monthOfYear, int dayOfMonth) {
+                        @Override
+                        public void onDateSet(DatePicker view, int year,
+                                              int monthOfYear, int dayOfMonth) {
 
-                                    editDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                            editDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
 
-                                }
-                            }, mYear, mMonth, mDay);
+                        }
+                    }, mYear, mMonth, mDay);
                     datePickerDialog.show();
 
                 }
@@ -377,16 +379,16 @@ public class Near_deal_deailActivity extends AppCompatActivity implements View.O
                     mMinute = c.get(Calendar.MINUTE);
 
                     // Launch Time Picker Dialog
-                    TimePickerDialog timePickerDialog = new TimePickerDialog(Near_deal_deailActivity.this,
-                            new TimePickerDialog.OnTimeSetListener() {
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(Near_deal_deailActivity.this, R.style.DialogTheme
+                            , new TimePickerDialog.OnTimeSetListener() {
 
-                                @Override
-                                public void onTimeSet(TimePicker view, int hourOfDay,
-                                                      int minute) {
+                        @Override
+                        public void onTimeSet(TimePicker view, int hourOfDay,
+                                              int minute) {
 
-                                    editTime.setText(hourOfDay + ":" + minute);
-                                }
-                            }, mHour, mMinute, false);
+                            editTime.setText(hourOfDay + ":" + minute);
+                        }
+                    }, mHour, mMinute, false);
                     timePickerDialog.show();
 
                 }

@@ -87,9 +87,9 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
     public static Bitmap bitmap;
     protected ViewDialog viewDialog;
     Dialog dialog;
-    AppCompatTextView txtName, txtPd, txtAd, txtLogout, txtPassword, txtNotification, txtAa, txtRv,txtSDate,txtEDate,txtOffer;
+    AppCompatTextView txtName, txtPd, txtAd, txtLogout, txtPassword, txtNotification, txtAa, txtRv, txtSDate, txtEDate, txtOffer;
     View ViewAd, viewRv;
-    LinearLayout l1Ad, l1Rv,l1Date;
+    LinearLayout l1Ad, l1Rv, l1Date;
     CircularImageView imgResro;
     LoginModel loginModel;
     String path;
@@ -149,20 +149,15 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
         txtRv.setOnClickListener(this);
         txtLogout.setOnClickListener(this);
         imgResro.setOnClickListener(this);
-        if (loginModel.getSessionData().getPackageId() != null) {
-            l1Rv.setVisibility(View.VISIBLE);
-            ViewAd.setVisibility(View.GONE);
-            l1Ad.setVisibility(View.GONE);
-            GetPackageInfo();
-        } else {
-            l1Rv.setVisibility(View.GONE);
-            viewRv.setVisibility(View.GONE);
-            l1Date.setVisibility(View.GONE);
-            txtOffer.setVisibility(View.GONE);
-            l1Ad.setVisibility(View.VISIBLE);
-        }
+
         GetUserInfo();
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        GetUserInfo();
     }
 
     private void GetPackageInfo() {
@@ -236,15 +231,29 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
 
 
                     resultGetRestoInfoById_ = object.getResultGetRestoInfoById();
+                    if (resultGetRestoInfoById_.getPackageId() != null) {
+                        l1Rv.setVisibility(View.VISIBLE);
+                        l1Date.setVisibility(View.VISIBLE);
+                        txtOffer.setVisibility(View.VISIBLE);
+                        ViewAd.setVisibility(View.GONE);
+                        l1Ad.setVisibility(View.GONE);
+                        GetPackageInfo();
+                    } else {
+                        l1Rv.setVisibility(View.GONE);
+                        viewRv.setVisibility(View.GONE);
+                        l1Date.setVisibility(View.GONE);
+                        txtOffer.setVisibility(View.GONE);
+                        l1Ad.setVisibility(View.VISIBLE);
+                    }
                     txtName.setText(resultGetRestoInfoById_.getName());
                     if (resultGetRestoInfoById_.getUserPhoto() != null) {
                         Glide.with(getActivity()).
                                 load(BuildConstants.User_Image + resultGetRestoInfoById_.getUserPhoto()).
                                 into(imgResro);
                     } else {
-                        Glide.with(getActivity()).
-                                load(R.drawable.ic_profile_menu).
-                                into(imgResro);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            imgResro.setImageResource(R.drawable.new_profile);
+                        }
                     }
 
                 } else if (object != null && object.getError() == true) {
@@ -337,8 +346,8 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
         final AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getActivity());
         pictureDialog.setTitle("Add Photo!");
         String[] pictureDialogItems = {
-                "Choose from Gallery",
                 "Take Photo",
+                "Choose from Gallery",
                 "Cancel"};
         pictureDialog.setItems(pictureDialogItems,
                 new DialogInterface.OnClickListener() {
@@ -346,10 +355,10 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-                                choosePhotoFromGallary();
+                                takePhotoFromCamera();
                                 break;
                             case 1:
-                                takePhotoFromCamera();
+                                choosePhotoFromGallary();
                                 break;
                             case 2:
                                 dialog.dismiss();
@@ -421,7 +430,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
                             ServerResponse serverResponse = response.body();
                             if (serverResponse != null && serverResponse.getError() == false) {
                                 Log.e("TAG", "Product : " + new Gson().toJson(response.body()));
-
+                                GetUserInfo();
                                 hideProgressDialog();
                                 Toast.makeText(getActivity(), serverResponse.getMsg(), Toast.LENGTH_SHORT).show();
 
@@ -526,7 +535,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
                         ServerResponse serverResponse = response.body();
                         if (serverResponse != null && serverResponse.getError() == false) {
                             Log.e("TAG", "Product : " + new Gson().toJson(response.body()));
-
+                            GetUserInfo();
                             hideProgressDialog();
                             Toast.makeText(getActivity(), serverResponse.getMsg(), Toast.LENGTH_SHORT).show();
 

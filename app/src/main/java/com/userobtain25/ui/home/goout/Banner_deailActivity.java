@@ -36,6 +36,7 @@ import com.userobtain25.model.SuccessModel;
 import com.userobtain25.model.goout.populardeal.ResultBannerCoupon;
 import com.userobtain25.model.goout.populardeal.ResultBannerCoupon_;
 import com.userobtain25.model.login.LoginModel;
+import com.userobtain25.utils.AppPreferences;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
 
@@ -57,7 +58,7 @@ public class Banner_deailActivity extends AppCompatActivity {
     RecyclerView recyclerviewNear;
     LoginModel loginModel;
     LinearLayout l1Horizontal;
-    String discount;
+    String discount, package_id;
     Dialog dialog;
     private int mYear, mMonth, mDay, mHour, mMinute;
     private RestroAdapter restroAdapter;
@@ -74,7 +75,7 @@ public class Banner_deailActivity extends AppCompatActivity {
     private void initView() {
         l1Horizontal = findViewById(R.id.l1Horizontal);
         discount = getIntent().getStringExtra("discount");
-
+        package_id = AppPreferences.getPackageId(this);
 
         loginModel = PrefUtils.getUser(Banner_deailActivity.this);
         viewDialog = new ViewDialog(Banner_deailActivity.this);
@@ -214,7 +215,7 @@ public class Banner_deailActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (loginModel != null) {
-                        if (loginModel.getSessionData().getPackageId() != null) {
+                        if (package_id != null) {
                             SendRequest();
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(Banner_deailActivity.this);
@@ -279,17 +280,17 @@ public class Banner_deailActivity extends AppCompatActivity {
                     mDay = c.get(Calendar.DAY_OF_MONTH);
 
 
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(Banner_deailActivity.this,
-                            new DatePickerDialog.OnDateSetListener() {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(Banner_deailActivity.this, R.style.DialogTheme
+                            , new DatePickerDialog.OnDateSetListener() {
 
-                                @Override
-                                public void onDateSet(DatePicker view, int year,
-                                                      int monthOfYear, int dayOfMonth) {
+                        @Override
+                        public void onDateSet(DatePicker view, int year,
+                                              int monthOfYear, int dayOfMonth) {
 
-                                    editDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                            editDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
 
-                                }
-                            }, mYear, mMonth, mDay);
+                        }
+                    }, mYear, mMonth, mDay);
                     datePickerDialog.show();
 
                 }
@@ -303,16 +304,16 @@ public class Banner_deailActivity extends AppCompatActivity {
                     mMinute = c.get(Calendar.MINUTE);
 
                     // Launch Time Picker Dialog
-                    TimePickerDialog timePickerDialog = new TimePickerDialog(Banner_deailActivity.this,
-                            new TimePickerDialog.OnTimeSetListener() {
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(Banner_deailActivity.this, R.style.DialogTheme
+                            , new TimePickerDialog.OnTimeSetListener() {
 
-                                @Override
-                                public void onTimeSet(TimePicker view, int hourOfDay,
-                                                      int minute) {
+                        @Override
+                        public void onTimeSet(TimePicker view, int hourOfDay,
+                                              int minute) {
 
-                                    editTime.setText(hourOfDay + ":" + minute);
-                                }
-                            }, mHour, mMinute, false);
+                            editTime.setText(hourOfDay + ":" + minute);
+                        }
+                    }, mHour, mMinute, false);
                     timePickerDialog.show();
 
                 }

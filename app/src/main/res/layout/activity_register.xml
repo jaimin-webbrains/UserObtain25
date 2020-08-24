@@ -157,7 +157,7 @@
                             android:layout_weight="0.7"
                             android:background="@null"
                             android:focusableInTouchMode="true"
-                            android:imeOptions="actionDone"
+                            android:imeOptions="actionNext"
                             android:inputType="textPassword"
                             android:textColor="@color/overlay_dark_40"
                             android:textColorHint="@color/white" />
@@ -203,7 +203,7 @@
                             android:layout_weight="0.7"
                             android:background="@null"
                             android:focusableInTouchMode="true"
-                            android:imeOptions="actionDone"
+                            android:imeOptions="actionNext"
                             android:inputType="textPassword"
                             android:textColor="@color/overlay_dark_40"
                             android:textColorHint="@color/white" />

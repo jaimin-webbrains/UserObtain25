@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,31 +10,12 @@
     <include layout="@layout/app_bar" />
 
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/viewProducts_RecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:isScrollContainer="true">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/viewProducts_RecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="8dp">
-
-            </androidx.recyclerview.widget.RecyclerView>
-
-
-        </LinearLayout>
-
-
-    </androidx.core.widget.NestedScrollView>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp" />
 
 
     <View
@@ -47,8 +28,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         android:layout_margin="5dp"
+        android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatEditText
@@ -60,8 +41,6 @@
             android:background="@color/overlay_dark_10"
             android:hint="Write review...."
             android:inputType="text"
-            android:focusableInTouchMode="true"
-            android:selectAllOnFocus="false"
             android:textColor="@color/overlay_dark_40"
             android:textSize="@dimen/text_size_large" />
 
@@ -100,4 +79,4 @@
     </LinearLayout>
 
 
-</FrameLayout>
+</LinearLayout>

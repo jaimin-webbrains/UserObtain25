@@ -25,7 +25,7 @@ public class ResultGetRestoInfoById_ {
     private String address;
     @SerializedName("user_photo")
     @Expose
-    private Object userPhoto;
+    private String userPhoto;
     @SerializedName("turms_and_condition")
     @Expose
     private Object turmsAndCondition;
@@ -43,16 +43,16 @@ public class ResultGetRestoInfoById_ {
     private String status;
     @SerializedName("paid")
     @Expose
-    private Object paid;
+    private String paid;
     @SerializedName("package_id")
     @Expose
-    private Object packageId;
+    private String packageId;
     @SerializedName("order_id")
     @Expose
-    private Object orderId;
+    private String orderId;
     @SerializedName("paid_date")
     @Expose
-    private Object paidDate;
+    private String paidDate;
     @SerializedName("user_tocken")
     @Expose
     private String userTocken;
@@ -108,13 +108,6 @@ public class ResultGetRestoInfoById_ {
         this.address = address;
     }
 
-    public Object getUserPhoto() {
-        return userPhoto;
-    }
-
-    public void setUserPhoto(Object userPhoto) {
-        this.userPhoto = userPhoto;
-    }
 
     public Object getTurmsAndCondition() {
         return turmsAndCondition;
@@ -156,35 +149,44 @@ public class ResultGetRestoInfoById_ {
         this.status = status;
     }
 
-    public Object getPaid() {
-        return paid;
-    }
 
-    public void setPaid(Object paid) {
-        this.paid = paid;
-    }
-
-    public Object getPackageId() {
+    public String getPackageId() {
         return packageId;
     }
 
-    public void setPackageId(Object packageId) {
+    public void setPackageId(String packageId) {
         this.packageId = packageId;
     }
 
-    public Object getOrderId() {
+    public String getUserPhoto() {
+        return userPhoto;
+    }
+
+    public void setUserPhoto(String userPhoto) {
+        this.userPhoto = userPhoto;
+    }
+
+    public String getPaid() {
+        return paid;
+    }
+
+    public void setPaid(String paid) {
+        this.paid = paid;
+    }
+
+    public String getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Object orderId) {
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 
-    public Object getPaidDate() {
+    public String getPaidDate() {
         return paidDate;
     }
 
-    public void setPaidDate(Object paidDate) {
+    public void setPaidDate(String paidDate) {
         this.paidDate = paidDate;
     }
 

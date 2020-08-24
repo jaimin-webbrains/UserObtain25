@@ -195,10 +195,9 @@ public class RejectedRequestFragmentFragment extends Fragment {
             final ResponseAcceptedOrRejected_ datum = moviesList.get(position);
 
                 if (datum.getStatus().equals("0")) {
-                    holder.txtDate.setText(datum.getName() + "");
+                    holder.txtCName.setText(datum.getName() + "");
                     holder.txtPerson.setText(datum.getNumMember() + "");
                     holder.txtDate.setText(datum.getDateAndTime() + "");
-                    holder.txtStatus.setVisibility(View.GONE);
                 }
 
 

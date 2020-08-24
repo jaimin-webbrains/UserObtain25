@@ -39,12 +39,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.userobtain25.R;
 import com.userobtain25.api.RetrofitHelper;
+import com.userobtain25.model.account.ResultGetRestoInfoById;
+import com.userobtain25.model.account.ResultGetRestoInfoById_;
 import com.userobtain25.model.login.LoginModel;
 import com.userobtain25.model.term.ResultGetTurms;
 import com.userobtain25.ui.home.account.MyAccountFragment;
 import com.userobtain25.ui.home.goout.HomeFragment;
 import com.userobtain25.ui.home.login.LoginFragment;
 import com.userobtain25.ui.home.search.SearchFragment;
+import com.userobtain25.utils.AppPreferences;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
 
@@ -77,6 +80,7 @@ public class HomeActivity extends AppCompatActivity implements LocationListener,
     private long UPDATE_INTERVAL = 2
             * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +152,7 @@ public class HomeActivity extends AppCompatActivity implements LocationListener,
         }
 
     }
+
 
     private void GetTerm() {
 

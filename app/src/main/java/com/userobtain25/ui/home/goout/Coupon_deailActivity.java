@@ -38,6 +38,7 @@ import com.userobtain25.model.goout.greatoffer.ResultUserCoupons;
 import com.userobtain25.model.goout.neardeal.ResultDisplayRestoPhoto;
 import com.userobtain25.model.goout.neardeal.ResultDisplayRestoPhoto_;
 import com.userobtain25.model.login.LoginModel;
+import com.userobtain25.utils.AppPreferences;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
 
@@ -59,7 +60,7 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
     RecyclerView recyclerviewNear, recyclerviewPopular;
     LoginModel loginModel;
     LinearLayout l1Horizontal;
-    String restro_id, type;
+    String restro_id,package_id;
     Dialog dialog;
     private int mYear, mMonth, mDay, mHour, mMinute;
     private MyCustomAdapter myCustomAdapter;
@@ -78,6 +79,8 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
     private void initView() {
         l1Horizontal = findViewById(R.id.l1Horizontal);
         restro_id = getIntent().getStringExtra("restro_id");
+        package_id = AppPreferences.getPackageId(this);
+
         loginModel = PrefUtils.getUser(Coupon_deailActivity.this);
         viewDialog = new ViewDialog(Coupon_deailActivity.this);
         recyclerviewNear = findViewById(R.id.recyclerviewNear);
@@ -278,7 +281,7 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
                 @Override
                 public void onClick(View v) {
                     if (loginModel != null) {
-                        if (loginModel.getSessionData().getPackageId() != null) {
+                        if (package_id != null) {
                             SendRequest();
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(Coupon_deailActivity.this);
@@ -342,8 +345,8 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
                     mDay = c.get(Calendar.DAY_OF_MONTH);
 
 
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(Coupon_deailActivity.this,
-                            new DatePickerDialog.OnDateSetListener() {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(Coupon_deailActivity.this, R.style.DialogTheme
+                            ,new DatePickerDialog.OnDateSetListener() {
 
                                 @Override
                                 public void onDateSet(DatePicker view, int year,
@@ -366,7 +369,8 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
                     mMinute = c.get(Calendar.MINUTE);
 
                     // Launch Time Picker Dialog
-                    TimePickerDialog timePickerDialog = new TimePickerDialog(Coupon_deailActivity.this,
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(Coupon_deailActivity.this,R.style.DialogTheme
+                            ,
                             new TimePickerDialog.OnTimeSetListener() {
 
                                 @Override

@@ -216,6 +216,7 @@ public class PackageActivity extends AppCompatActivity {
                             if (object != null && object.getError() == false) {
                                 Toast.makeText(PackageActivity.this, object.getMsg() + "", Toast.LENGTH_SHORT).show();
                                 GetPackageList();
+                                finish();
                             } else if (object != null && object.getError() == true) {
                                 //Toast.makeText(PackageActivity.this, object.getMsg() + "", Toast.LENGTH_SHORT).show();
 

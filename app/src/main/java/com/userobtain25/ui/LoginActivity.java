@@ -210,7 +210,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
                 if (Email.isEmpty()) {
-                    editEmail.setError("Old Password Required");
+                    editEmail.setError("Email Required");
                     editEmail.requestFocus();
                     return;
                 } else {
