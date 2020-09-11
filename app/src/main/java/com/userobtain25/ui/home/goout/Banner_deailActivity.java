@@ -199,6 +199,15 @@ public class Banner_deailActivity extends AppCompatActivity {
             holder.txtName.setText(datum.getRestoName() + "");
             holder.txtDiscount.setText("Discount Value : " + datum.getDiscountValue() + " % ");
             holder.txtAmount.setText("Minimum Amount : " + datum.getMinimumAmount() + " ₹ ");
+            if (datum.getMaximum_amount() != null) {
+                holder.txtMaxAmount.setVisibility(View.VISIBLE);
+                holder.vMax.setVisibility(View.VISIBLE);
+                holder.txtMaxAmount.setText("Maximum Amount : " + datum.getMaximum_amount() + " ₹ ");
+
+            } else {
+                holder.txtMaxAmount.setVisibility(View.GONE);
+                holder.vMax.setVisibility(View.GONE);
+            }
             holder.imgpercent.setText(datum.getActive() + "");
             if (datum.getRestoPhoto() != null) {
                 Glide.with(Banner_deailActivity.this).
@@ -421,9 +430,10 @@ public class Banner_deailActivity extends AppCompatActivity {
         public class MyViewHolder extends RecyclerView.ViewHolder {
 
 
-            TextView imgpercent, txtAmount, txtDiscount, txtName;
+            TextView imgpercent, txtAmount, txtMaxAmount, txtDiscount, txtName;
             ImageView img;
             LinearLayout l1Request;
+            View vMax;
 
 
             public MyViewHolder(View view) {
@@ -433,9 +443,11 @@ public class Banner_deailActivity extends AppCompatActivity {
                 txtName = view.findViewById(R.id.txtName);
                 txtDiscount = view.findViewById(R.id.txtDiscount);
                 txtAmount = view.findViewById(R.id.txtAmount);
+                txtMaxAmount = view.findViewById(R.id.txtMaxAmount);
                 imgpercent = view.findViewById(R.id.imgpercent);
                 img = view.findViewById(R.id.img);
                 l1Request = view.findViewById(R.id.l1Request);
+                vMax = view.findViewById(R.id.vMax);
 
 
             }

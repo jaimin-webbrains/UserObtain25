@@ -22,6 +22,9 @@ public class ResultDisplayActiveRestaurantCoupon_ {
     @SerializedName("minimum_amount")
     @Expose
     private String minimumAmount;
+    @SerializedName("maximum_amount")
+    @Expose
+    private String maximum_amount;
     @SerializedName("active")
     @Expose
     private String active;
@@ -96,6 +99,14 @@ public class ResultDisplayActiveRestaurantCoupon_ {
 
     public void setMinimumAmount(String minimumAmount) {
         this.minimumAmount = minimumAmount;
+    }
+
+    public String getMaximum_amount() {
+        return maximum_amount;
+    }
+
+    public void setMaximum_amount(String maximum_amount) {
+        this.maximum_amount = maximum_amount;
     }
 
     public String getActive() {

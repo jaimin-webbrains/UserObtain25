@@ -14,12 +14,13 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.3"
+            android:layout_weight="0.4"
+            android:layout_gravity="center"
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
                 android:layout_gravity="center"
                 android:layout_margin="10dp"
                 android:background="@color/white"
@@ -29,8 +30,8 @@
 
                 <ImageView
                     android:id="@+id/img"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
                     android:layout_gravity="center"
                     android:layout_margin="5dp"
                     android:scaleType="centerCrop"
@@ -59,11 +60,11 @@
 
                     <TextView
                         android:id="@+id/txtName"
+                        style="@style/customfontstyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Name"
                         android:gravity="center"
-                        style="@style/customfontstyle"
+                        android:text="Name"
                         android:textColor="@color/grey_80"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -80,11 +81,27 @@
 
             <TextView
                 android:id="@+id/txtDiscount"
+                style="@style/customfontstyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="Discount Value:20"
+                android:textColor="@color/grey_80"
+                android:textSize="12dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_margin="2dp"
+                android:background="@drawable/line" />
+
+
+            <TextView
+                android:id="@+id/txtAmount"
                 style="@style/customfontstyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Minimum Amount:100"
                 android:textColor="@color/grey_80"
                 android:textSize="14dp" />
 
@@ -95,15 +112,14 @@
                 android:background="@drawable/line" />
 
 
-
             <TextView
-                android:id="@+id/txtAmount"
+                android:id="@+id/txtMaxAmount"
+                style="@style/customfontstyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Minimum Amount:100"
-                style="@style/customfontstyle"
+                android:text="Maximum Amount:100"
                 android:textColor="@color/grey_80"
-                android:textSize="14dp" />
+                android:textSize="16dp" />
 
             <LinearLayout
                 android:id="@+id/l1Coupon"
@@ -117,13 +133,13 @@
 
 
                 <TextView
+                    style="@style/customfontstyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="Use Coupon"
                     android:textAllCaps="true"
-                    style="@style/customfontstyle"
                     android:textColor="@color/white" />
             </LinearLayout>
 

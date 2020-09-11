@@ -189,6 +189,15 @@ public class NotificationActivity extends AppCompatActivity {
             holder.txtName.setText(datum.getName() + "");
             holder.txtDiscount.setText("Discount Value : " + datum.getDiscountValue() + " % ");
             holder.txtAmount.setText("Minimum Amount : " + datum.getMinimumAmount() + " ₹ ");
+            if (datum.getMaximum_amount() != null) {
+                holder.txtMaxAmount.setVisibility(View.VISIBLE);
+                holder.vMax.setVisibility(View.VISIBLE);
+                holder.txtMaxAmount.setText("Maximum Amount : " + datum.getMaximum_amount() + " ₹ ");
+
+            } else {
+                holder.txtMaxAmount.setVisibility(View.GONE);
+                holder.vMax.setVisibility(View.GONE);
+            }
             if (datum.getRestoPhoto() != null) {
                 Glide.with(NotificationActivity.this).
                         load(BuildConstants.Main_Image + datum.getRestoPhoto()).
@@ -212,9 +221,9 @@ public class NotificationActivity extends AppCompatActivity {
         public class MyViewHolder extends RecyclerView.ViewHolder {
 
 
-            TextView txtAmount,txtDiscount, txtName;
+            TextView txtAmount,txtDiscount, txtName,txtMaxAmount;
             ImageView img;
-
+            View vMax;
 
             public MyViewHolder(View view) {
                 super(view);
@@ -224,6 +233,8 @@ public class NotificationActivity extends AppCompatActivity {
                 txtDiscount = view.findViewById(R.id.txtDiscount);
                 txtAmount = view.findViewById(R.id.txtAmount);
                 img = view.findViewById(R.id.img);
+                txtMaxAmount = view.findViewById(R.id.txtMaxAmount);
+                vMax = view.findViewById(R.id.vMax);
 
 
             }

@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -190,15 +189,17 @@ public class PackageActivity extends AppCompatActivity {
             holder.txtName.setText(datum.getName() + "");
             holder.txtPrice.setText(datum.getPrice() + " ₹ ");
             holder.txtValidity.setText(datum.getValidity() + " Year ");
+
             holder.btnBuy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     BuyPackage();
                 }
 
                 private void BuyPackage() {
                     Random random = new Random();
-                    int randomNumber = random.nextInt((80 - 65) +1) + 65;
+                    int randomNumber = random.nextInt((80 - 65) + 1) + 65;
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("order_id", randomNumber + "");
                     hashMap.put("package_id", datum.getId() + "");
@@ -215,7 +216,7 @@ public class PackageActivity extends AppCompatActivity {
                             hideProgressDialog();
                             if (object != null && object.getError() == false) {
                                 Toast.makeText(PackageActivity.this, object.getMsg() + "", Toast.LENGTH_SHORT).show();
-                                GetPackageList();
+                                //GetPackageList();
                                 finish();
                             } else if (object != null && object.getError() == true) {
                                 //Toast.makeText(PackageActivity.this, object.getMsg() + "", Toast.LENGTH_SHORT).show();

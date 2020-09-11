@@ -48,7 +48,7 @@ public class GreatOfferActivity extends AppCompatActivity {
 
     protected ViewDialog viewDialog;
     LoginModel loginModel;
-    String  package_id;
+    String package_id;
     private RecyclerView recycler_view;
     private MyCustomAdapter myCustomAdapter;
     private ArrayList<ResultGreatOffer> resultDisplayRestaurantCoupon_s = new ArrayList<>();
@@ -199,6 +199,15 @@ public class GreatOfferActivity extends AppCompatActivity {
             holder.txtName.setText(datum.getName() + "");
             holder.txtDiscount.setText("Discount Value : " + datum.getDiscountValue() + " % ");
             holder.txtAmount.setText("Minimum Amount : " + datum.getMinimumAmount() + " ₹ ");
+            if (datum.getMaximum_amount() != null) {
+                holder.txtMaxAmount.setVisibility(View.VISIBLE);
+
+                holder.txtMaxAmount.setText("Maximum Amount : " + datum.getMaximum_amount() + " ₹ ");
+
+            } else {
+                holder.txtMaxAmount.setVisibility(View.GONE);
+
+            }
             if (datum.getRestoPhoto() != null) {
                 Glide.with(GreatOfferActivity.this).
                         load(BuildConstants.Main_Image + datum.getRestoPhoto()).
@@ -257,74 +266,73 @@ public class GreatOfferActivity extends AppCompatActivity {
 
                 }
 
-        private void UseCoupon(final View view) {
-            HashMap<String, String> hashMap = new HashMap<>();
-            hashMap.put("user_id", loginModel.getSessionData().getId() + "");
-            hashMap.put("restaurant_id", restro_id + "");
-            hashMap.put("coupon_id", copon_id + "");
-            showProgressDialog();
-            Log.e("GAYA", hashMap + "");
-            Call<ResultGenerateNumberToUseCoupon> marqueCall = RetrofitHelper.createService(RetrofitHelper.Service.class).GenerateNumberToUseCoupon(hashMap);
-            marqueCall.enqueue(new Callback<ResultGenerateNumberToUseCoupon>() {
-                @Override
-                public void onResponse(@NonNull Call<ResultGenerateNumberToUseCoupon> call, @NonNull Response<ResultGenerateNumberToUseCoupon> response) {
-                    ResultGenerateNumberToUseCoupon object = response.body();
-                    hideProgressDialog();
-                    Log.e("TAG", "ChatV_Response : " + new Gson().toJson(response.body()));
-                    if (object != null && object.getError() == false) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(GreatOfferActivity.this);
-                        ViewGroup viewGroup = findViewById(android.R.id.content);
-                        View dialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.custom_coupon, viewGroup, false);
-                        builder.setView(dialogView);
-                        final AlertDialog alertDialog = builder.create();
-                        alertDialog.show();
-                        TextView txtCode=alertDialog.findViewById(R.id.txtCode);
-                        txtCode.setText(object.getResultGenerateNumberToUseCoupon().getCode());
-                        dialogView.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                alertDialog.dismiss();
+                private void UseCoupon(final View view) {
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    hashMap.put("user_id", loginModel.getSessionData().getId() + "");
+                    hashMap.put("restaurant_id", restro_id + "");
+                    hashMap.put("coupon_id", copon_id + "");
+                    showProgressDialog();
+                    Log.e("GAYA", hashMap + "");
+                    Call<ResultGenerateNumberToUseCoupon> marqueCall = RetrofitHelper.createService(RetrofitHelper.Service.class).GenerateNumberToUseCoupon(hashMap);
+                    marqueCall.enqueue(new Callback<ResultGenerateNumberToUseCoupon>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ResultGenerateNumberToUseCoupon> call, @NonNull Response<ResultGenerateNumberToUseCoupon> response) {
+                            ResultGenerateNumberToUseCoupon object = response.body();
+                            hideProgressDialog();
+                            Log.e("TAG", "ChatV_Response : " + new Gson().toJson(response.body()));
+                            if (object != null && object.getError() == false) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(GreatOfferActivity.this);
+                                ViewGroup viewGroup = findViewById(android.R.id.content);
+                                View dialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.custom_coupon, viewGroup, false);
+                                builder.setView(dialogView);
+                                final AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+                                TextView txtCode = alertDialog.findViewById(R.id.txtCode);
+                                txtCode.setText(object.getResultGenerateNumberToUseCoupon().getCode());
+                                dialogView.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        alertDialog.dismiss();
+                                    }
+                                });
+
+                            } else if (object != null && object.getError() == true) {
+                                // Toast.makeText(getActivity(), object.getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+
+
+                                JSONObject jObjError = null;
+                                try {
+                                    jObjError = new JSONObject(response.errorBody().string());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    Log.e("TAG", "PO=> Error " + jObjError.getJSONObject("errors") + "");
+                                    Toast.makeText(getApplicationContext(), jObjError.getJSONObject("errors") + "", Toast.LENGTH_LONG).show();
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
                             }
-                        });
-
-                    } else if (object != null && object.getError() == true) {
-                        // Toast.makeText(getActivity(), object.getMessage(), Toast.LENGTH_SHORT).show();
-                    } else {
-
-
-                        JSONObject jObjError = null;
-                        try {
-                            jObjError = new JSONObject(response.errorBody().string());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            Log.e("TAG", "PO=> Error " + jObjError.getJSONObject("errors") + "");
-                            Toast.makeText(getApplicationContext(), jObjError.getJSONObject("errors") + "", Toast.LENGTH_LONG).show();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
 
-
-                    }
+                        @Override
+                        public void onFailure(@NonNull Call<ResultGenerateNumberToUseCoupon> call, @NonNull Throwable t) {
+                            t.printStackTrace();
+                            hideProgressDialog();
+                            Log.e("ChatV_Response", t.getMessage() + "");
+                        }
+                    });
                 }
-
-                @Override
-                public void onFailure(@NonNull Call<ResultGenerateNumberToUseCoupon> call, @NonNull Throwable t) {
-                    t.printStackTrace();
-                    hideProgressDialog();
-                    Log.e("ChatV_Response", t.getMessage() + "");
-                }
-            });
-        }
 
             });
 
         }
-
 
 
         @Override
@@ -335,7 +343,7 @@ public class GreatOfferActivity extends AppCompatActivity {
         public class MyViewHolder extends RecyclerView.ViewHolder {
 
 
-            TextView txtAmount, txtDiscount, txtName;
+            TextView txtAmount, txtDiscount, txtName, txtMaxAmount;
             ImageView img;
             LinearLayout l1Coupon;
 
@@ -347,6 +355,7 @@ public class GreatOfferActivity extends AppCompatActivity {
                 txtName = view.findViewById(R.id.txtName);
                 txtDiscount = view.findViewById(R.id.txtDiscount);
                 txtAmount = view.findViewById(R.id.txtAmount);
+                txtMaxAmount = view.findViewById(R.id.txtMaxAmount);
                 img = view.findViewById(R.id.img);
                 l1Coupon = view.findViewById(R.id.l1Coupon);
 

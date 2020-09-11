@@ -60,7 +60,7 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
     RecyclerView recyclerviewNear, recyclerviewPopular;
     LoginModel loginModel;
     LinearLayout l1Horizontal;
-    String restro_id,package_id;
+    String restro_id, package_id;
     Dialog dialog;
     private int mYear, mMonth, mDay, mHour, mMinute;
     private MyCustomAdapter myCustomAdapter;
@@ -265,6 +265,15 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
             holder.txtName.setText(datum.getRestoName() + "");
             holder.txtDiscount.setText("Discount Value : " + datum.getDiscountValue() + " % ");
             holder.txtAmount.setText("Minimum Amount : " + datum.getMinimumAmount() + " ₹ ");
+            if (datum.getMaximum_amount() != null) {
+                holder.txtMaxAmount.setVisibility(View.VISIBLE);
+                holder.vMax.setVisibility(View.VISIBLE);
+                holder.txtMaxAmount.setText("Maximum Amount : " + datum.getMaximum_amount() + " ₹ ");
+
+            } else {
+                holder.txtMaxAmount.setVisibility(View.GONE);
+                holder.vMax.setVisibility(View.GONE);
+            }
             holder.imgpercent.setText(datum.getActive() + "");
             if (datum.getRestoPhoto() != null) {
                 Glide.with(Coupon_deailActivity.this).
@@ -346,16 +355,16 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
 
 
                     DatePickerDialog datePickerDialog = new DatePickerDialog(Coupon_deailActivity.this, R.style.DialogTheme
-                            ,new DatePickerDialog.OnDateSetListener() {
+                            , new DatePickerDialog.OnDateSetListener() {
 
-                                @Override
-                                public void onDateSet(DatePicker view, int year,
-                                                      int monthOfYear, int dayOfMonth) {
+                        @Override
+                        public void onDateSet(DatePicker view, int year,
+                                              int monthOfYear, int dayOfMonth) {
 
-                                    editDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                            editDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
 
-                                }
-                            }, mYear, mMonth, mDay);
+                        }
+                    }, mYear, mMonth, mDay);
                     datePickerDialog.show();
 
                 }
@@ -369,7 +378,7 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
                     mMinute = c.get(Calendar.MINUTE);
 
                     // Launch Time Picker Dialog
-                    TimePickerDialog timePickerDialog = new TimePickerDialog(Coupon_deailActivity.this,R.style.DialogTheme
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(Coupon_deailActivity.this, R.style.DialogTheme
                             ,
                             new TimePickerDialog.OnTimeSetListener() {
 
@@ -486,9 +495,10 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
         public class MyViewHolder extends RecyclerView.ViewHolder {
 
 
-            TextView imgpercent, txtAmount, txtDiscount, txtName;
+            TextView imgpercent, txtAmount, txtDiscount, txtName, txtMaxAmount;
             ImageView img;
             LinearLayout l1Request;
+            View vMax;
 
 
             public MyViewHolder(View view) {
@@ -498,9 +508,11 @@ public class Coupon_deailActivity extends AppCompatActivity implements View.OnCl
                 txtName = view.findViewById(R.id.txtName);
                 txtDiscount = view.findViewById(R.id.txtDiscount);
                 txtAmount = view.findViewById(R.id.txtAmount);
+                txtMaxAmount = view.findViewById(R.id.txtMaxAmount);
                 imgpercent = view.findViewById(R.id.imgpercent);
                 img = view.findViewById(R.id.img);
                 l1Request = view.findViewById(R.id.l1Request);
+                vMax = view.findViewById(R.id.vMax);
 
 
             }
