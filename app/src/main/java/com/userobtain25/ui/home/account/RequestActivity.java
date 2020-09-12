@@ -45,6 +45,7 @@ public class RequestActivity extends AppCompatActivity {
     }
     private void setupViewPager(ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(PendingRequestFragmentFragment.newInstance(), "Pending Request");
         adapter.addFragment(AcceptedRequestFragmentFragment.newInstance(), "Accepted Request");
         adapter.addFragment(RejectedRequestFragmentFragment.newInstance(), "Rejected Request");
 

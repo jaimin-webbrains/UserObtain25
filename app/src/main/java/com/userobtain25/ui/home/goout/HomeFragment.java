@@ -40,8 +40,6 @@ import com.userobtain25.model.goout.neardeal.ResultNearestRestaurants;
 import com.userobtain25.model.goout.populardeal.ResultGetBanner;
 import com.userobtain25.model.goout.populardeal.ResultGetBanners;
 import com.userobtain25.model.login.LoginModel;
-import com.userobtain25.ui.HomeActivity;
-import com.userobtain25.ui.LoginActivity;
 import com.userobtain25.ui.home.search.SearchFragment;
 import com.userobtain25.utils.AppPreferences;
 import com.userobtain25.utils.PrefUtils;
@@ -66,7 +64,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private static DecimalFormat df = new DecimalFormat("0.000");
     protected ViewDialog viewDialog;
     View TODO;
-    String  package_id;
+    String package_id;
     AppCompatTextView txtLocation, txtSearch, txtNodata, txtNodata1;
     LinearLayout txtGreat, txtTrending, txtarrival;
     RecyclerView recyclerviewNear, recyclerviewPopular;
@@ -87,7 +85,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onStart() {
         super.onStart();
         GetNearDeals();
-        GetUserInfo();
+
     }
 
     @Override
@@ -148,6 +146,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+        }
+        if (loginModel != null) {
+            GetUserInfo();
+        } else {
 
         }
         return view;

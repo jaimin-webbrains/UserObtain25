@@ -204,6 +204,8 @@ public class RetrofitHelper {
         @Headers({"Accept: application/json"})
         @POST("DeleteUserRequest")
         Call<SuccessModel> DeleteUserRequest(@FieldMap HashMap<String, String> hashMap);
+
+
         /////go out//////
 
         @FormUrlEncoded
@@ -260,7 +262,7 @@ public class RetrofitHelper {
         @FormUrlEncoded
         @Headers({"Accept: application/json"})
         @POST("BannerCoupon")
-        Call<ResultBannerCoupon>BannerCoupon(@FieldMap HashMap<String, String> hashMap);
+        Call<ResultBannerCoupon> BannerCoupon(@FieldMap HashMap<String, String> hashMap);
 
         @FormUrlEncoded
         @Headers({"Accept: application/json"})

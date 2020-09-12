@@ -59,6 +59,7 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.txtLater:
                 Intent i1 = new Intent(SelectionActivity.this, HomeActivity.class);
+                i1.putExtra("type","0");
                 startActivity(i1);
                 finish();;
                 break;

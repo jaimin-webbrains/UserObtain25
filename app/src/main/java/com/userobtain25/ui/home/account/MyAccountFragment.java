@@ -54,6 +54,7 @@ import com.userobtain25.model.account.ResultUserPackageInfo;
 import com.userobtain25.model.account.ResultUserPackageInfo_;
 import com.userobtain25.model.login.LoginModel;
 import com.userobtain25.ui.SelectionActivity;
+import com.userobtain25.utils.AppPreferences;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
 
@@ -93,6 +94,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
     CircularImageView imgResro;
     LoginModel loginModel;
     String path;
+    String package_id;
     String selectedImagePath;
     private ResultGetRestoInfoById_ resultGetRestoInfoById_;
     private ArrayList<ResultUserPackageInfo_> resultUserPackageInfo_s = new ArrayList<>();
@@ -177,6 +179,8 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
 
 
                     resultUserPackageInfo_s = object.getResultUserPackageInfo();
+                    package_id = resultGetRestoInfoById_.getPackageId();
+                    AppPreferences.setPackageId(getActivity(), package_id);
                     txtEDate.setText(resultUserPackageInfo_s.get(0).getPackageEnds());
                     txtSDate.setText(resultUserPackageInfo_s.get(0).getPackageStarts());
                     txtOffer.setText(resultUserPackageInfo_s.get(0).getPackageName());

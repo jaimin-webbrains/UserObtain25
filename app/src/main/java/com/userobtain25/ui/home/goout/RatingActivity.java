@@ -1,14 +1,10 @@
 package com.userobtain25.ui.home.goout;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,11 +25,7 @@ import com.userobtain25.api.RetrofitHelper;
 import com.userobtain25.model.SuccessModel;
 import com.userobtain25.model.goout.neardeal.ResultGetReview;
 import com.userobtain25.model.goout.neardeal.ResultGetReviews;
-import com.userobtain25.model.goout.neardeal.ResultNearestRestaurant;
-import com.userobtain25.model.goout.neardeal.ResultNearestRestaurants;
-import com.userobtain25.model.goout.populardeal.ResultGetBanner;
 import com.userobtain25.model.login.LoginModel;
-import com.userobtain25.utils.AppPreferences;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
 
@@ -49,10 +41,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RatingActivity extends AppCompatActivity implements View.OnClickListener {
-    RecyclerView viewProducts_RecyclerView;
     protected ViewDialog viewDialog;
-    AppCompatTextView  btnSubmit;
-    SimpleRatingBar  ratingAdd;
+    RecyclerView viewProducts_RecyclerView;
+    AppCompatTextView btnSubmit;
+    SimpleRatingBar ratingAdd;
     AppCompatEditText edtReview;
     LoginModel loginModel;
     String restro_id;
@@ -68,44 +60,44 @@ public class RatingActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initView() {
-            restro_id = getIntent().getStringExtra("restro_id");
-            loginModel = PrefUtils.getUser(RatingActivity.this);
-            viewDialog = new ViewDialog(RatingActivity.this);
-            viewDialog.setCancelable(false);
+        restro_id = getIntent().getStringExtra("restro_id");
+        loginModel = PrefUtils.getUser(RatingActivity.this);
+        viewDialog = new ViewDialog(RatingActivity.this);
+        viewDialog.setCancelable(false);
 
-            btnSubmit = findViewById(R.id.btnSubmit);
-            btnSubmit.setOnClickListener(this);
-            ratingAdd = findViewById(R.id.ratingAdd);
-            edtReview = findViewById(R.id.edtReview);
-            viewProducts_RecyclerView = findViewById(R.id.viewProducts_RecyclerView);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(RatingActivity.this);
-            viewProducts_RecyclerView.setLayoutManager(layoutManager);
-            viewProducts_RecyclerView.setHasFixedSize(true);
-            GetRating();
-        }
+        btnSubmit = findViewById(R.id.btnSubmit);
+        btnSubmit.setOnClickListener(this);
+        ratingAdd = findViewById(R.id.ratingAdd);
+        edtReview = findViewById(R.id.edtReview);
+        viewProducts_RecyclerView = findViewById(R.id.viewProducts_RecyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(RatingActivity.this);
+        viewProducts_RecyclerView.setLayoutManager(layoutManager);
+        viewProducts_RecyclerView.setHasFixedSize(true);
+        GetRating();
+    }
 
-        private void initToolbar() {
-            Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
-            toolbar.setTitle("Rating & Reviews");
-            setSupportActionBar(toolbar);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
-
-        }
-
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.btnSubmit:
-                    PostRating();
-                    break;
-
-
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        toolbar.setTitle("Rating & Reviews");
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
+        });
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnSubmit:
+                PostRating();
+                break;
+
+
+        }
 
     }
 
@@ -118,6 +110,9 @@ public class RatingActivity extends AppCompatActivity implements View.OnClickLis
             edtReview.setError("Write Review..");
             edtReview.requestFocus();
             return;
+        }
+        if (ratingAdd.getRating() == 0) {
+            Toast.makeText(this, "Please Add Rate", Toast.LENGTH_SHORT).show();
         } else {
 
             HashMap<String, String> hashMap = new HashMap<>();
@@ -228,6 +223,15 @@ public class RatingActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
     }
+
+    protected void hideProgressDialog() {
+        viewDialog.dismiss();
+    }
+
+    protected void showProgressDialog() {
+        viewDialog.show();
+    }
+
     public class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.MyViewHolder> {
 
         private ArrayList<ResultGetReview> moviesList;
@@ -259,7 +263,6 @@ public class RatingActivity extends AppCompatActivity implements View.OnClickLis
 
 
             final ResultGetReview datum = moviesList.get(position);
-
 
 
             holder.txtName.setText(datum.getRestoName());
@@ -297,7 +300,6 @@ public class RatingActivity extends AppCompatActivity implements View.OnClickLis
         public class MyViewHolder extends RecyclerView.ViewHolder {
 
 
-
             SimpleRatingBar rating;
             AppCompatTextView txtName, txtReview;
             CircularImageView imgPerson;
@@ -316,13 +318,5 @@ public class RatingActivity extends AppCompatActivity implements View.OnClickLis
 
         }
 
-    }
-
-    protected void hideProgressDialog() {
-        viewDialog.dismiss();
-    }
-
-    protected void showProgressDialog() {
-        viewDialog.show();
     }
 }

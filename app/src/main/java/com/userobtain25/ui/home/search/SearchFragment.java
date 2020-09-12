@@ -1,5 +1,6 @@
 package com.userobtain25.ui.home.search;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -210,9 +211,26 @@ public class SearchFragment extends Fragment {
             holder.txtRating.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i = new Intent(getActivity(), RatingActivity.class);
-                    i.putExtra("restro_id", datum.getId());
-                    startActivity(i);
+                    if (loginModel != null) {
+                        Intent i = new Intent(getActivity(), RatingActivity.class);
+                        i.putExtra("restro_id", datum.getId());
+                        startActivity(i);
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        ViewGroup viewGroup = getActivity().findViewById(android.R.id.content);
+                        View dialogView = LayoutInflater.from(v.getContext()).inflate(R.layout.customview, viewGroup, false);
+                        builder.setView(dialogView);
+                        final AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                        dialogView.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                alertDialog.dismiss();
+
+                            }
+                        });
+                    }
+
                 }
             });
             holder.itemView.setOnClickListener(new View.OnClickListener() {
