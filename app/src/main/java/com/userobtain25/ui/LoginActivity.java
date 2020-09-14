@@ -27,6 +27,7 @@ import com.userobtain25.R;
 import com.userobtain25.api.RetrofitHelper;
 import com.userobtain25.model.SuccessModel;
 import com.userobtain25.model.login.LoginModel;
+import com.userobtain25.utils.AppPreferences;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
 
@@ -50,11 +51,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     LoginModel loginModel;
     Dialog dialog;
     ImageView show_confirm;
+    String updateToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        updateToken = AppPreferences.getToken(LoginActivity.this);
         loginModel = PrefUtils.getUser(LoginActivity.this);
         viewDialog = new ViewDialog(LoginActivity.this);
         viewDialog.setCancelable(false);
@@ -63,6 +66,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if (loginModel.getSessionData() != null) {
                 Intent i = new Intent(LoginActivity.this, HomeActivity.class);
                 i.putExtra("type", "1");
+                i.putExtra("updateToken", updateToken);
                 startActivity(i);
                 finish();
             }
@@ -125,6 +129,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             hashMap.put("email", email_id + "");
             hashMap.put("password", pass_word + "");
+            hashMap.put("user_tocken", updateToken + "");
 
             showProgressDialog();
             Call<LoginModel> loginModelCall = RetrofitHelper.createService(RetrofitHelper.Service.class).LoginModel(hashMap);
@@ -143,6 +148,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         Intent i = new Intent(LoginActivity.this, HomeActivity.class);
                         i.putExtra("type", "0");
+                        i.putExtra("updateToken", object.getSessionData().getUserTocken());
                         startActivity(i);
                         finish();
 
