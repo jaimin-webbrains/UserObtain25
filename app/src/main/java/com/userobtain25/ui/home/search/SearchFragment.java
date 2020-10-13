@@ -199,7 +199,7 @@ public class SearchFragment extends Fragment {
             }
             if (datum.getRestoPhoto() != null) {
                 Glide.with(getActivity()).
-                        load(BuildConstants.Slider_Image + datum.getRestoPhoto()).
+                        load(BuildConstants.Main_Image + datum.getRestoPhoto()).
                         asBitmap().
                         into(holder.img);
             } else {

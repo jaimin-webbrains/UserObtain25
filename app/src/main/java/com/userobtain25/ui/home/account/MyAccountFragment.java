@@ -625,7 +625,10 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
         final ImageView show_pass_new = dialog.findViewById(R.id.show_pass_new);
         final ImageView show_pass_confirm = dialog.findViewById(R.id.show_pass_confirm);
         final Button btn_update = dialog.findViewById(R.id.btn_update);
-        editOld_p.setText(resultGetRestoInfoById_.getPassword() + "");
+        if (resultGetRestoInfoById_.getPassword() != null) {
+            editOld_p.setText(resultGetRestoInfoById_.getPassword() + "");
+        }
+
         show_pass_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

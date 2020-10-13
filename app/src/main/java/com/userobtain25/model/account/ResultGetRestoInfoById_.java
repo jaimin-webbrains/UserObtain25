@@ -17,7 +17,7 @@ public class ResultGetRestoInfoById_ {
     @SerializedName("mobile")
     @Expose
     private String mobile;
-    @SerializedName("password")
+    @SerializedName("changepassword")
     @Expose
     private String password;
     @SerializedName("address")

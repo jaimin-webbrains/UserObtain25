@@ -1,5 +1,8 @@
 package com.userobtain25.ui.home.account;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,12 +21,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.gson.Gson;
+import com.payumoney.core.PayUmoneyConfig;
+import com.payumoney.core.PayUmoneySdkInitializer;
+import com.payumoney.core.entity.TransactionResponse;
+import com.payumoney.sdkui.ui.utils.PayUmoneyFlowManager;
+import com.payumoney.sdkui.ui.utils.ResultModel;
 import com.userobtain25.R;
 import com.userobtain25.api.RetrofitHelper;
 import com.userobtain25.model.SuccessModel;
 import com.userobtain25.model.account.ResultPackage;
 import com.userobtain25.model.account.ResultPackages;
 import com.userobtain25.model.login.LoginModel;
+import com.userobtain25.utils.Constants;
 import com.userobtain25.utils.PrefUtils;
 import com.userobtain25.utils.ViewDialog;
 
@@ -193,9 +202,9 @@ public class PackageActivity extends AppCompatActivity {
             holder.btnBuy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     BuyPackage();
                 }
+
 
                 private void BuyPackage() {
                     Random random = new Random();
@@ -216,10 +225,8 @@ public class PackageActivity extends AppCompatActivity {
                             hideProgressDialog();
                             if (object != null && object.getError() == false) {
                                 Toast.makeText(PackageActivity.this, object.getMsg() + "", Toast.LENGTH_SHORT).show();
-                                //GetPackageList();
                                 finish();
                             } else if (object != null && object.getError() == true) {
-                                //Toast.makeText(PackageActivity.this, object.getMsg() + "", Toast.LENGTH_SHORT).show();
 
                             } else {
                                 JSONObject jObjError = null;
@@ -256,6 +263,8 @@ public class PackageActivity extends AppCompatActivity {
         }
 
 
+
+
         @Override
         public int getItemCount() {
             return moviesList.size();
@@ -265,7 +274,7 @@ public class PackageActivity extends AppCompatActivity {
 
 
             TextView txtValidity, txtPrice, txtName;
-            LinearLayout btnBuy;
+            final LinearLayout btnBuy;
 
 
             public MyViewHolder(View view) {
@@ -283,5 +292,6 @@ public class PackageActivity extends AppCompatActivity {
         }
 
     }
+
 
 }

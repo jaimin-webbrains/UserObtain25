@@ -25,7 +25,7 @@ public class ResultSearchResto_ {
     @SerializedName("email")
     @Expose
     private String email;
-    @SerializedName("password")
+    @SerializedName("changepassword")
     @Expose
     private String password;
     @SerializedName("address")
