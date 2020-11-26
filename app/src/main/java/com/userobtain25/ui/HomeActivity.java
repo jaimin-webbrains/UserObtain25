@@ -88,7 +88,9 @@ public class HomeActivity extends AppCompatActivity implements LocationListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         type = getIntent().getStringExtra("type");
-        updateToken = getIntent().getStringExtra("updateToken");
+        //updateToken = getIntent().getStringExtra("updateToken");
+        updateToken = AppPreferences.getToken(HomeActivity.this);
+
         loginModel = PrefUtils.getUser(HomeActivity.this);
         viewDialog = new ViewDialog(HomeActivity.this);
         viewDialog.setCancelable(false);

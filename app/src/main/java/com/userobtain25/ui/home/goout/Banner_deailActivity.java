@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -54,6 +55,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Banner_deailActivity extends AppCompatActivity {
+    LinearLayout lnoData;
+    AppCompatTextView txtNoData;
     protected ViewDialog viewDialog;
     RecyclerView recyclerviewNear;
     LoginModel loginModel;
@@ -76,7 +79,8 @@ public class Banner_deailActivity extends AppCompatActivity {
         l1Horizontal = findViewById(R.id.l1Horizontal);
         discount = getIntent().getStringExtra("discount");
         package_id = AppPreferences.getPackageId(this);
-
+        lnoData = findViewById(R.id.lnoData);
+        txtNoData = findViewById(R.id.txtNoData);
         loginModel = PrefUtils.getUser(Banner_deailActivity.this);
         viewDialog = new ViewDialog(Banner_deailActivity.this);
         recyclerviewNear = findViewById(R.id.recyclerviewNear);
@@ -104,11 +108,20 @@ public class Banner_deailActivity extends AppCompatActivity {
                 if (object != null && object.getError() == false) {
 
                     resultDisplayActiveRestaurantCoupon_s = object.getResultBannerCoupon();
-                    restroAdapter = new RestroAdapter(resultDisplayActiveRestaurantCoupon_s);
-                    recyclerviewNear.setAdapter(restroAdapter);
+                    if (resultDisplayActiveRestaurantCoupon_s.size() != 0) {
+                        restroAdapter = new RestroAdapter(resultDisplayActiveRestaurantCoupon_s);
+                        recyclerviewNear.setAdapter(restroAdapter);
+                        restroAdapter.notifyDataSetChanged();
+
+                    } else {
+                        recyclerviewNear.setVisibility(View.GONE);
+                        lnoData.setVisibility(View.VISIBLE);
+                        txtNoData.setText("No Active Coupon for this Restaurant");
+                    }
+
 
                 } else if (object != null && object.getError() == true) {
-                    //Toast.makeText(Banner_deailActivity.this, object.getMessage(), Toast.LENGTH_SHORT).show();
+
                 } else {
 
 
@@ -229,7 +242,7 @@ public class Banner_deailActivity extends AppCompatActivity {
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(Banner_deailActivity.this);
                             ViewGroup viewGroup = findViewById(android.R.id.content);
-                            View dialogView = LayoutInflater.from(v.getContext()).inflate(R.layout.custom_package, viewGroup, false);
+                            View dialogView = LayoutInflater.from(v.getContext()).inflate(R.layout.custom_request, viewGroup, false);
                             builder.setView(dialogView);
                             final AlertDialog alertDialog = builder.create();
                             alertDialog.show();

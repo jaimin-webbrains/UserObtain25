@@ -223,7 +223,8 @@ public class GreatOfferActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(GreatOfferActivity.this, Coupon_deailActivity.class);
-                    i.putExtra("restro_id", datum.getRestaurantId());
+                   // i.putExtra("restro_id", datum.getRestaurantId());
+                    i.putExtra("restro_id", datum.getId());
                     startActivity(i);
                 }
             });
