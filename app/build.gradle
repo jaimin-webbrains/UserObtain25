@@ -8,8 +8,8 @@ android {
         applicationId "com.userobtain25"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 6
-        versionName "1.5"
+        versionCode 7
+        versionName "1.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
@@ -28,7 +28,7 @@ android {
     }
     signingConfigs {
         releaseApk {
-            storeFile file('E:\\AndroidProjects2020\\UserObtain25.jks')
+            storeFile file('/Users/webbrains/Webbrains/JKS/UserObtain25.jks')
             storePassword 'userobtain25'
             keyAlias = 'userobtain25'
             keyPassword 'userobtain25'
